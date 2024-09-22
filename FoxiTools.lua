@@ -17,7 +17,6 @@ if enable_autoupdate then
     end
 end
 
-
 local ffi = require 'ffi'
 local imgui = require 'mimgui'
 local pie = require('imgui_piemenu')
@@ -60,8 +59,8 @@ local ini = inicfg.load({
     Pasw = {
         password = ''
     }
-},'LawHelper/lawini.ini')
-inicfg.save(ini, 'LawHelper/lawini.ini')
+},'FTools/lawini.ini')
+inicfg.save(ini, 'FTools/lawini.ini')
 -- темы
 
 local decorList = {u8'Black Theme', u8'White Theme', u8'Blue Theme', u8'Orange Theme', u8'Gray Theme', u8'Green Theme'}
@@ -83,6 +82,7 @@ local checkinfo = new.bool(ini.mainIni.checkinfo)
 local text_act = new.char[256](u8(ini.mainIni.text_act))
 local tag = '{7172EE}« Foxi Tools »{FFFFFF} '
 local pass = new.char[256](u8(ini.Pasw.password))
+local ComboTest = new.int()
 local alpha = new.float(ini.Themes.alpha)
 local pos = nil
 local pos2 = nil
@@ -119,9 +119,11 @@ local powerBool = new.bool(false)
 local lower, sub, char, upper = string.lower, string.sub, string.char, string.upper
 local concat = table.concat
 local selectedBinderIndex = 1
+local selectedBlockIndex = nil
 local checkbox1 = new.bool()
 local checkbox2 = new.bool()
 local blocknote = new.char[10000]()
+local blocktitle = new.char[256]()
 local actien = new.bool(ini.mainIni.actien)
 local renderWindow = imgui.new.bool(true)
 local showPieMenu = imgui.new.bool(false)
@@ -188,7 +190,7 @@ local function saveSettings()
     ini.mainIni.org = u8:decode(ffi.string(org))
     ini.mainIni.rank = u8:decode(ffi.string(rank))
     ini.mainIni.checkinfo = checkinfo[0]
-    inicfg.save(ini, 'LawHelper/lawini.ini')  -- Сохраняем все настройки в LawHelper/lawini.ini
+    inicfg.save(ini, 'FTools/lawini.ini')  -- Сохраняем все настройки в FTools/lawini.ini
 
     sampAddChatMessage(tag .. "Настройки {7172EE}сохранены{FFFFFF}!", -1)
 end
@@ -206,7 +208,7 @@ function mysplit(inputstr, sep)
 
 function saveBinders()
     local json_data = json.encode(binders)
-    local file, err = io.open('moonloader/LawHelper/binders.json', 'w')
+    local file, err = io.open('moonloader/FTools/binders.json', 'w')
     if not file then
         sampAddChatMessage(tag .. "Ошибка при сохранении биндеров: " .. err, -1)
         return
@@ -215,40 +217,8 @@ function saveBinders()
     file:close() 
 end
 
-function saveBlock()
-    local json_data = json.encode(block)
-    local file, err = io.open('moonloader/LawHelper/blocknotes.json', 'w')
-    if not file then
-        sampAddChatMessage(tag .. "Ошибка при сохранении записей: " .. err, -1)
-        return
-    end
-    file:write(json_data)
-    file:close() 
-end
-
-function loadBlock()
-    local file, err = io.open('moonloader/LawHelper/blocknotes.json', 'r')
-    if not file then
-        sampAddChatMessage(tag .. "Файл 'blocknotes.json' не найден. Создаем новый.", -1)
-        saveBlock() -- сохранение пустого массива в файл с помощью saveBinders
-        return
-    end
-
-    local json_data = file:read('*a')
-    if json_data then
-        blockData = json.decode(json_data)
-        -- Проверка на существование данных
-        if blockData then
-            block = blockData
-        else
-            block = {}
-        end
-    end
-    file:close()
-end
-
 function loadBinders()
-    local file, err = io.open('moonloader/LawHelper/binders.json', 'r')
+    local file, err = io.open('moonloader/FTools/binders.json', 'r')
     if not file then
         sampAddChatMessage(tag .. "Файл 'binders.json' не найден. Создаем новый.", -1)
         saveBinders() -- сохранение пустого массива в файл с помощью saveBinders
@@ -268,6 +238,37 @@ function loadBinders()
     file:close()
 end
 
+function saveNotes()
+    local json_data = json.encode(blocks)
+    local file, err = io.open('moonloader/FTools/notebook.json', 'w')
+    if not file then
+        sampAddChatMessage(tag .. "Ошибка при сохранении биндеров: " .. err, -1)
+        return
+    end
+    file:write(json_data)
+    file:close() 
+end
+
+function loadNotes()
+    local file, err = io.open('moonloader/FTools/notebook.json', 'r')
+    if not file then
+        sampAddChatMessage(tag .. "Файл 'notebook.json' не найден. Создаем новый.", -1)
+        saveNotes() -- сохранение пустого массива в файл с помощью saveBinders
+        return
+    end
+
+    local json_data = file:read('*a')
+    if json_data then
+        notesData = json.decode(json_data)
+        -- Проверка на существование данных
+        if notesData then
+            blocks = notesData
+        else
+            blocks = {}
+        end
+    end
+    file:close()
+end
 local function copyBinder(selectedIndex)
     -- Получаем выбранный биндера
     local binderToCopy = binders[selectedIndex]  
@@ -461,6 +462,8 @@ function main()
     save_command()
     loadBinders()
     saveBinders()
+    loadNotes()
+    saveNotes()
     sampAddChatMessage(tag .. "Скрипт {7172EE}запущен", -1)
     sampAddChatMessage(tag .. "Команда открытия меню - {7172EE}/fox.", -1)
     sampRegisterChatCommand('fox', function() WinState[0] = not WinState[0] end)
@@ -528,20 +531,20 @@ imgui.OnFrame(function() return ssu[0] end, function(player)
     if imgui.Checkbox(u8'Запрос', zap) then
         if zap[0] == true then
             ini.mainIni.zap = true
-            inicfg.save(ini, 'LawHelper/lawini.ini')
+            inicfg.save(ini, 'FTools/lawini.ini')
         elseif zap[0] == false then
             ini.mainIni.zap = false
-            inicfg.save(ini, 'LawHelper/lawini.ini')
+            inicfg.save(ini, 'FTools/lawini.ini')
         end
     end
     imgui.SameLine()
     if imgui.Checkbox(u8'Запрос /d', zapd) then
         if zapd[0] == true then
             ini.mainIni.zapd = true
-            inicfg.save(ini, 'LawHelper/lawini.ini')
+            inicfg.save(ini, 'FTools/lawini.ini')
         elseif zapd[0] == false then
             ini.mainIni.zapd = false
-            inicfg.save(ini, 'LawHelper/lawini.ini')
+            inicfg.save(ini, 'FTools/lawini.ini')
         end
     end
 
@@ -684,7 +687,7 @@ end)
 -- сохранение темы
 function save_themes()
     ini.Themes.number = decorListNumber[0]
-    inicfg.save(ini, 'LawHelper/lawini.ini')
+    inicfg.save(ini, 'FTools/lawini.ini')
     imgui.SetNextWindowBgAlpha(alpha[0])
 end
 
@@ -697,7 +700,7 @@ function cmd_ssu(arg)
         ssu[0] = not ssu[0]
     end
     ini.mainIni.purID = arg
-    inicfg.save(ini, 'LawHelper/lawini.ini')
+    inicfg.save(ini, 'FTools/lawini.ini')
 end
 
 function cmd_stik(arg)
@@ -874,7 +877,7 @@ imgui.OnFrame(function() return about_us[0] end, function(player)
     imgui.SetNextWindowSize(imgui.ImVec2(180, 155), imgui.Cond.Always)
     imgui.Begin(fa.CIRCLE_INFO .. u8" Информация", about_us, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoFocusOnAppearing)
     imgui.Text(u8'Имя скрипта: Foxi Tools')
-    imgui.Text(u8'Версия: v0.0.5 pre-alpha')
+    imgui.Text(u8'Версия: v0.0.5 alpha')
     imgui.Text(u8'Автор: Choko Pay')
     if imgui.Button(u8'Закрыть', imgui.ImVec2(150, 30)) then
         about_us[0] = false
@@ -962,26 +965,103 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
 
     if tab == 5 then
         imgui.SetCursorPos(imgui.ImVec2(190, 43))
+        
         if imgui.BeginChild('Shpora', imgui.ImVec2(795, 470), true) then
             imgui.Button(u8'Блокнот', imgui.ImVec2(765, 30))
+    
+            -- Список блоков
             if imgui.BeginChild('Block List', imgui.ImVec2(150, 400), true) then
                 imgui.Columns(1)
-                imgui.CText(u8'Меню блокнотов')
+                imgui.CText(fa.SIGNATURE .. u8' Меню блокнотов')
                 imgui.Columns(1)
                 imgui.Separator()
                 imgui.Columns(1)
-                imgui.Text(u8'Тест')
-                imgui.Columns(1)
-                imgui.Separator()
+    
+                for i = 1, #blocks do 
+                    local block = blocks[i]
+                    if imgui.Selectable(u8(block.title), selectedBlockIndex == i) then
+                        selectedBlockIndex = i
+                        selectedBlockIndex = i
+                        -- Обновляем поля при выборе блока
+                        blocknote = new.char[10000](u8(block.text)) -- Загрузка текста выбранного блока
+                        blocktitle = new.char[256](u8(block.title)) -- Загрузка названия выбранного блока
+                    end
+                    imgui.Columns(1)
+                    imgui.Separator()
+                end
+                
+                imgui.EndChild()
             end
-            imgui.EndChild()
+    
             imgui.SameLine()
+    
+            -- Редактор выбранного блока
             if imgui.BeginChild('Block Edit', imgui.ImVec2(607, 400), true) then
-                imgui.CText(u8'Редактор блонкота')
+                imgui.CText(fa.PEN .. u8' Редактор блокнота')
                 imgui.Separator()
-                imgui.InputTextMultiline('##blocknote', blocknote, 10000, imgui.ImVec2(575, 200))
+    
+                -- Поле для редактирования названия
+                imgui.PushItemWidth(463)
+                imgui.InputText('##titleofnotes', blocktitle, 256)
+    
+                -- Кнопка для создания нового блока
+                imgui.SameLine()
+                if imgui.Button(faicons.PLUS) then
+                    selectedBlockIndex = nil
+                    blocktitle = new.char[256]()
+                    blocknote = new.char[10000]()
+                end
+                if imgui.IsItemHovered() then
+                    imgui.BeginTooltip()
+                    imgui.Text(u8'Новый блокнот')
+                    imgui.EndTooltip()
+                end
+    
+                -- Кнопка для сохранения блока
+                imgui.SameLine()
+                if imgui.Button(fa.FLOPPY_DISK) then
+                    if selectedBlockIndex then
+                        blocks[selectedBlockIndex].text = u8:decode(ffi.string(blocknote))
+                        blocks[selectedBlockIndex].title = u8:decode(ffi.string(blocktitle))
+                    end
+                    table.insert(blocks, {
+                        text = u8:decode(ffi.string(blocknote)),
+                        title = u8:decode(ffi.string(blocktitle))
+                    })
+                    saveNotes()
+                end
+                if imgui.IsItemHovered() then
+                    imgui.BeginTooltip()
+                    imgui.Text(u8'ЭТА КНОПКА СОХРАНЯЕТ БЛОКНОТ, ЕСЛИ ЕЕ НЕ НАЖАТЬ НИЧЕГО НЕ СОХРАНИТСЯ')
+                    imgui.EndTooltip()
+                end
+    
+                -- Кнопка для удаления блока
+                imgui.SameLine()
+                if imgui.Button(fa.TRASH) and selectedBlockIndex then
+                    table.remove(blocks, selectedBlockIndex)
+                    selectedBlockIndex = nil
+                    blocknote = new.char[10000]()
+                    blocktitle = new.char[256]()
+                    saveNotes()
+                end
+                if imgui.IsItemHovered() then
+                    imgui.BeginTooltip()
+                    imgui.Text(u8'Удалить блокнот')
+                    imgui.EndTooltip()
+                end
+                
+                imgui.PopItemWidth()
+    
+                -- Поле для редактирования текста блока
+                imgui.PushItemWidth(575)
+                imgui.InputTextMultiline('##textmultiline', blocknote, 10000, imgui.ImVec2(575, 300))
+                imgui.PopItemWidth()
+    
+                -- Обновление полей при выборе блока происходит в блоке выше (при выборе в списке)
+                
+                imgui.EndChild()
             end
-            imgui.EndChild()
         end
     end
 
@@ -1237,11 +1317,11 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
                 if checkinfo[0] == true then
                     window_two[0] = true
                     ini.mainIni.checkinfo = checkinfo[0]
-                    inicfg.save(ini, 'LawHelper/lawini.ini')
+                    inicfg.save(ini, 'FTools/lawini.ini')
                 else
                     window_two[0] = false
                     ini.mainIni.checkinfo = checkinfo[0]
-                    inicfg.save(ini, 'LawHelper/lawini.ini')
+                    inicfg.save(ini, 'FTools/lawini.ini')
                 end
             end
             imgui.SameLine()
@@ -1258,7 +1338,7 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
             imgui.PushItemWidth(200)
             if imgui.SliderFloat(u8'Прозрачность фона', alpha, 0, 1) then
                 ini.Themes.alpha = alpha[0]
-                inicfg.save(ini, 'LawHelper/lawini.ini')
+                inicfg.save(ini, 'FTools/lawini.ini')
                 theme[decorListNumber[0]+1].change()
             end
             imgui.PopItemWidth()
@@ -1268,31 +1348,33 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
             end
             imgui.EndChild()
             if imgui.BeginChild('Noup', imgui.ImVec2(200, 80), true) then
-                imgui.Text(u8'')
+                imgui.CText(u8'Разработчик')
+                imgui.CText(u8'Choko_Pay')
             end
             imgui.EndChild()
             imgui.SameLine()
             imgui.SetCursorPos(imgui.ImVec2(223, 160))
             if imgui.BeginChild('mainmenu', imgui.ImVec2(350, 178), true) then
                 imgui.CText(u8'Foxi Helper')
-                imgui.Text(u8'Возможности хелпера:\n1. Удобные настройки\n2. Биндер без ограничения в кол-ве биндов\n3. Меню шпоргалок\n4. Радиальное (круговое) меню\n5. Законодательство и уставы 21-го сервера в хелпере\n6. Помощник собеседований\n7. Техническая поддержка\nИ многое многое другое')
+                imgui.Text(u8'Возможности хелпера:\n1. Удобные настройки\n2. Биндер без ограничения в кол-ве биндов\n3. Блокноты\n4. Радиальное (круговое) меню\n5. Законодательство и уставы 21-го сервера в хелпере\n6. Помощник собеседований\n7. Техническая поддержка\nИ многое многое другое')
             end
             imgui.EndChild()
             imgui.SameLine()
             if imgui.BeginChild('Commands2', imgui.ImVec2(200, 90), true) then
                 imgui.CText(u8'Информация')
                 imgui.CText(u8'Foxi Helper')
-                imgui.CText(u8'pre-alpha v0.0.5')
+                imgui.CText(u8'alpha v0.0.5')
             end
             imgui.EndChild()
             imgui.SetCursorPos(imgui.ImVec2(581, 258))
             if imgui.BeginChild('Noup2', imgui.ImVec2(200, 80), true) then
-                imgui.Text(u8'')
+                imgui.CText(u8'Последнее обновление')
+                imgui.CText("22/09/2024")
             end
             imgui.EndChild()
             imgui.SetCursorPos(imgui.ImVec2(15, 345))
             if imgui.BeginChild('Thanks', imgui.ImVec2(766, 110), true) then
-                imgui.CText(u8'Спасибо, за всё, Илья Ситников!')
+                imgui.Image(imhandle, imgui.ImVec2(735, 80))
             end
             imgui.EndChild()
         end
