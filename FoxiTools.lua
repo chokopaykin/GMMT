@@ -1,6 +1,6 @@
 -- главное
 script_name("Foxi Tools")
-script_version("0.0.5")
+script_version("0.1.0")
 
 local enable_autoupdate = true -- false to disable auto-update + disable sending initial telemetry (server, moonloader version, script version, samp nickname, virtual volume serial number)
 local autoupdate_loaded = false
@@ -877,7 +877,7 @@ imgui.OnFrame(function() return about_us[0] end, function(player)
     imgui.SetNextWindowSize(imgui.ImVec2(180, 155), imgui.Cond.Always)
     imgui.Begin(fa.CIRCLE_INFO .. u8" Информация", about_us, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoFocusOnAppearing)
     imgui.Text(u8'Имя скрипта: Foxi Tools')
-    imgui.Text(u8'Версия: v0.0.5 alpha')
+    imgui.Text(u8'Версия: v0.1.0 alpha')
     imgui.Text(u8'Автор: Choko Pay')
     if imgui.Button(u8'Закрыть', imgui.ImVec2(150, 30)) then
         about_us[0] = false
@@ -1363,7 +1363,7 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
             if imgui.BeginChild('Commands2', imgui.ImVec2(200, 90), true) then
                 imgui.CText(u8'Информация')
                 imgui.CText(u8'Foxi Helper')
-                imgui.CText(u8'alpha v0.0.5')
+                imgui.CText(u8'alpha v0.1.0')
             end
             imgui.EndChild()
             imgui.SetCursorPos(imgui.ImVec2(581, 258))
