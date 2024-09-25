@@ -1,22 +1,24 @@
--- главное
+-- автообновление
 script_name("Foxi Tools")
-script_version("0.1.0")
+script_version("0.1.1")
+tag = '{7172EE}« Foxi Tools »{FFFFFF} '
 
 local enable_autoupdate = true -- false to disable auto-update + disable sending initial telemetry (server, moonloader version, script version, samp nickname, virtual volume serial number)
 local autoupdate_loaded = false
 local Update = nil
 if enable_autoupdate then
-    local updater_loaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Загрузка обновления завершена.')sampAddChatMessage(b..'Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;print('v'..thisScript().version..': Обновление не требуется.')if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print('v'..thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
+    local updater_loaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Загрузка обновления завершена.')sampAddChatMessage(b..'Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;sampAddChatMessage(tag ..'Обновление не требуется.', -1)if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print('v'..thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
     if updater_loaded then
         autoupdate_loaded, Update = pcall(Updater)
         if autoupdate_loaded then
             Update.json_url = "https://raw.githubusercontent.com/chokopaykin/GMMT/refs/heads/main/autoupdate.json?" .. tostring(os.clock())
-            Update.prefix = "[" .. string.upper(thisScript().name) .. "]: "
+            Update.prefix = tag
             Update.url = ""
         end
     end
 end
 
+-- импортирование
 local ffi = require 'ffi'
 local imgui = require 'mimgui'
 local pie = require('imgui_piemenu')
@@ -43,26 +45,25 @@ local ini = inicfg.load({
         name = '',
         org = '',
         rank = '',
-        checkinfo = false,
-        purID=0,
-        zap = false,
-        zapd = false,
-        posit = false,
-        await = 1000,
-        actien = false,
-        text_act = ''
+        checkinfo = false
     },
     Themes = {
         number = 0,
         alpha = 1
     },
-    Pasw = {
-        password = ''
-    }
-},'FTools/lawini.ini')
-inicfg.save(ini, 'FTools/lawini.ini')
--- темы
+    SmartSu = {
+        zap = false,
+        zapd = false
+    },
+},'FTools/Fox.ini')
+inicfg.save(ini, 'FTools/Fox.ini')
+local name = new.char[256](u8(ini.mainIni.name))
+local org = new.char[256](u8(ini.mainIni.org))
+local rank = new.char[256](u8(ini.mainIni.rank))
+local checkinfo = new.bool(ini.mainIni.checkinfo)
+local alpha = new.float(ini.Themes.alpha)
 
+-- темы
 local decorList = {u8'Black Theme', u8'White Theme', u8'Blue Theme', u8'Orange Theme', u8'Gray Theme', u8'Green Theme'}
 local decorListBuffer = imgui.new['const char*'][#decorList](decorList)
 local decorListNumber = new.int(ini.Themes.number)
@@ -71,117 +72,52 @@ local styler = imgui.GetStyle()
 -- мимгуи основное
 local WinState = new.bool()
 local tab = 1
-local box = new.bool()
-local pip = new.bool()
 local window_two = new.bool()
-local password_screen = new.bool()
-local name = new.char[256](u8(ini.mainIni.name))
-local org = new.char[256](u8(ini.mainIni.org))
-local rank = new.char[256](u8(ini.mainIni.rank))
-local checkinfo = new.bool(ini.mainIni.checkinfo)
-local text_act = new.char[256](u8(ini.mainIni.text_act))
-local tag = '{7172EE}« Foxi Tools »{FFFFFF} '
-local pass = new.char[256](u8(ini.Pasw.password))
-local ComboTest = new.int()
-local alpha = new.float(ini.Themes.alpha)
-local pos = nil
-local pos2 = nil
-local flags = imgui.WindowFlags.NoMove + imgui.WindowFlags.NoDecoration + imgui.WindowFlags.AlwaysAutoResize
-local json = require 'cjson'  -- Библиотека для работы с JSON (убедитесь, что она доступна)
-local buttonWidth = 120
-local buttonHeight = 28
-local numButtons = 6
-local windowWidth = 795
-local spacing = (windowWidth - (buttonWidth * numButtons)) / (numButtons + 1)
-
-
+local flags = imgui.WindowFlags.NoMove + imgui.WindowFlags.NoDecoration
+local json = require 'cjson'
+local searchQuery_1 = new.char[256]()
 
 -- Инициализация массивов для хранения биндера
-local binders = {}  -- Массив для хранения всех биндера
+local binders = {}
 local new_binder = {text = '', command = '', delay = 1000, title = '', power = false} 
-local block = {}  -- Массив для хранения всех биндера
-local new_block = {text = '', title = ''}  -- Структура для хранения нового биндера
-local editing_index = nil  -- Индекс редактируемого биндера
+local blocks = {}
+local new_block = {text = '', title = ''}
 local window_edit_binder = new.bool(false) 
-texter = new.char[10000]()
-commander = new.char[256]()
-delay = new.int(1000)
-title = new.char[256]()
-power = new.bool()
+local texter = new.char[10000]()
+local commander = new.char[256]()
+local delay = new.int(1000)
+local title = new.char[256]()
+local power = new.bool()
+
 -- умный розыск
 local ssu = new.bool()
 local stik = new.bool()
-local zap = new.bool(ini.mainIni.zap)
-local zapd = new.bool(ini.mainIni.zapd)
-local search_active = false
-local search = new.char[256]()
+local zap = new.bool(ini.SmartSu.zap)
+local zapd = new.bool(ini.SmartSu.zapd)
 local powerBool = new.bool(false)
-local lower, sub, char, upper = string.lower, string.sub, string.char, string.upper
-local concat = table.concat
 local selectedBinderIndex = 1
 local selectedBlockIndex = nil
-local checkbox1 = new.bool()
-local checkbox2 = new.bool()
 local blocknote = new.char[10000]()
 local blocktitle = new.char[256]()
-local actien = new.bool(ini.mainIni.actien)
-local renderWindow = imgui.new.bool(true)
-local showPieMenu = imgui.new.bool(false)
-local menuItems = {
-    { label = '/dealing', action = function() sampSendChat("/b /dealing") end },
-    {
-        label = 'cost', items = {
-            { label = '100$', action = function() showPieMenu[0] = not showPieMenu[0] end },
-            { label = '200$', action = function() showPieMenu[0] = not showPieMenu[0] end },
-            { label = u8'Себе', action = function() sampSendChat("/inscar") end }
-        }
-    },
-    {
-        label = 'user', items = {
-            { label = u8'Реклама', action = function() sampSendChat("Работает автодилер") end },
-            { label = u8'Скилл', action = function() sampSendChat("/carskill") end }
-        }
-    }
-}
 
 -- initialization table
-local lu_rus, ul_rus = {}, {}
-for i = 192, 223 do
-    local A, a = char(i), char(i + 32)
-    ul_rus[A] = a
-    lu_rus[a] = A
-end
-local E, e = char(168), char(184)
-ul_rus[E] = e
-lu_rus[e] = E
-
-function string.nlower(s)
-    s = lower(s)
-    local len, res = #s, {}
-    for i = 1, len do
-        local ch = sub(s, i, i)
-        res[i] = ul_rus[ch] or ch
-    end
-    return concat(res)
-end
-
 function get_first_last_name(nickname)
     local parts = {}
     for part in string.gmatch(nickname, "([^_]+)") do
         table.insert(parts, part)
     end
-    return parts[1], parts[2]  -- Возвращаем имя и фамилию
+    return parts[1], parts[2] 
 end
 
 function countLinesInBinder(binder)
-    if binder and binder.text then  -- Проверка на наличие биндера и его текста
+    if binder and binder.text then  
         local count = 1
         for _ in binder.text:gmatch("[\n]+") do
-            count = count + 1  -- Увеличиваем счетчик для каждой строки
+            count = count + 1
         end
         return count
     else
-        return 0  -- Возвращаем 0, если биндер или текст не существует
+        return 0 
     end
 end
 
@@ -190,25 +126,13 @@ local function saveSettings()
     ini.mainIni.org = u8:decode(ffi.string(org))
     ini.mainIni.rank = u8:decode(ffi.string(rank))
     ini.mainIni.checkinfo = checkinfo[0]
-    inicfg.save(ini, 'FTools/lawini.ini')  -- Сохраняем все настройки в FTools/lawini.ini
-
+    inicfg.save(ini, 'FTools/Fox.ini')
     sampAddChatMessage(tag .. "Настройки {7172EE}сохранены{FFFFFF}!", -1)
 end
 
-function mysplit(inputstr, sep)
-    if sep == nil then
-      sep = "%s"
-    end
-    local t = {}
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-      table.insert(t, str)
-    end
-    return t
-  end
-
 function saveBinders()
     local json_data = json.encode(binders)
-    local file, err = io.open('moonloader/FTools/binders.json', 'w')
+    local file, err = io.open('moonloader/config/FTools/binders.json', 'w')
     if not file then
         sampAddChatMessage(tag .. "Ошибка при сохранении биндеров: " .. err, -1)
         return
@@ -218,17 +142,16 @@ function saveBinders()
 end
 
 function loadBinders()
-    local file, err = io.open('moonloader/FTools/binders.json', 'r')
+    local file, err = io.open('moonloader/config/FTools/binders.json', 'r')
     if not file then
         sampAddChatMessage(tag .. "Файл 'binders.json' не найден. Создаем новый.", -1)
-        saveBinders() -- сохранение пустого массива в файл с помощью saveBinders
+        saveBinders()
         return
     end
 
     local json_data = file:read('*a')
     if json_data then
         binderData = json.decode(json_data)
-        -- Проверка на существование данных
         if binderData then
             binders = binderData
         else
@@ -240,7 +163,7 @@ end
 
 function saveNotes()
     local json_data = json.encode(blocks)
-    local file, err = io.open('moonloader/FTools/notebook.json', 'w')
+    local file, err = io.open('moonloader/config/FTools/notebook.json', 'w')
     if not file then
         sampAddChatMessage(tag .. "Ошибка при сохранении биндеров: " .. err, -1)
         return
@@ -250,17 +173,16 @@ function saveNotes()
 end
 
 function loadNotes()
-    local file, err = io.open('moonloader/FTools/notebook.json', 'r')
+    local file, err = io.open('moonloader/config/FTools/notebook.json', 'r')
     if not file then
         sampAddChatMessage(tag .. "Файл 'notebook.json' не найден. Создаем новый.", -1)
-        saveNotes() -- сохранение пустого массива в файл с помощью saveBinders
+        saveNotes()
         return
     end
 
     local json_data = file:read('*a')
     if json_data then
         notesData = json.decode(json_data)
-        -- Проверка на существование данных
         if notesData then
             blocks = notesData
         else
@@ -269,189 +191,68 @@ function loadNotes()
     end
     file:close()
 end
+
 local function copyBinder(selectedIndex)
-    -- Получаем выбранный биндера
     local binderToCopy = binders[selectedIndex]  
     
     if binderToCopy then
         for i = 1, #binders do 
-        -- Создаем новый биндер с копированными данными
+
             newBinder = {
                 title = ffi.string("Копия " .. binderToCopy.title .. " " .. tostring(i)),
-                text = ffi.string(binderToCopy.text),  -- Копируем заголовок биндера
-                command = ffi.string(binderToCopy.command),  -- Копируем команду
-                delay = binderToCopy.delay,  -- Копируем задержку
-                power = false  -- Устанавливаем значение power на false для новой копии
+                text = ffi.string(binderToCopy.text),
+                command = ffi.string(binderToCopy.command),
+                delay = binderToCopy.delay,
+                power = false
             }
         end
         
-        -- Отладочное сообщение
         print("Копирование биндера: " .. newBinder.title)
 
-        -- Добавляем новый биндер в массив
         table.insert(binders, newBinder)  
         
-        -- Проверка на успешное добавление
         if #binders > 0 then
             print("Общий биндеров после копирования: " .. #binders)
         else
             print("Ошибка: Биндеры не добавлены.")
         end
         
-        saveBinders()  -- Сохраняем обновленный список биндеров
+        saveBinders()
         
-        sampAddChatMessage("Бинд " .. newBinder.title .. " успешно скопирован!", -1)  -- Уведомление об успешном копировании
+        sampAddChatMessage("Бинд " .. newBinder.title .. " успешно скопирован!", -1)
     else
-        sampAddChatMessage("Не удалось скопировать выбранный бинд!", -1)  -- Уведомление об ошибке
+        sampAddChatMessage("Не удалось скопировать выбранный бинд!", -1)
     end
 end
 
-local konstitution = {
-    ["Статья 2"] = {
-        {"Раздел 1.", "Исполнительная власть возглавляется и формируется Президентом Queen Creek. Он занимает свою должность в течение сорока пяти дней и избирается в порядке, установленным настоящей Конституции.\nВ случае отстранения Президента от должности или его смерти, отставки либо неспособности осуществлять полномочия и обязанности по названной должности таковые переходят к \nпервому Вице-Президенту, и Верховный совет посредством своего решения может установить, какое должностное лицо в случае отстранения, смерти, \nотставки либо неспособности Президента и первого Вице-Президента будет действовать как президент, и такое должностное лицо должно \nдействовать соответствующим образом, пока не будет устранена причина неспособности либо новый Президент не будет избран \nПрезидент в установленные сроки получает за свою службу вознаграждение, которое не может быть увеличено либо уменьшено в течение того срока, на который он избран. \nПеред вступлением в должность Президента приносит присягу либо делает заявление в следующей форме, положа руку на конституцию: \n«Я торжественно клянусь что буду добросовестно исполнять \nОбязанности Президента Республики Queen Creek и по мере всех своих сил \nподдерживать, охранять и защищать суверенитет Queen Creek». \nПолномочия Президента могут быть пролонгированы Верховным советом Республики. \nНовоизбранный Президент вступает в должность и дает присягу в день сложения полномочий ранее избранного Президента."},
-        {"Раздел 2.", "Президент является главнокомандующим вооруженных сил и правоохранительных органов Queen Creek;"},
-        {"Раздел 3.", "Президент Queen Creek обладает следующими полномочиями:\na. Формировать и устанавливать структуру департаментов и правительства в целом указом, издавать отдельные указы по вопросам, устанавливающим, изменяющим, отменяющим права, обязанности, правоотношения органов государственной власти и иных лиц, устанавливать главам департаментов полномочия, непротиворечащие настоящей конституции и законам Queen Creek.\nb. Заключать договора с внешними государствами.\nc. Назначать и отзывать послов и консулов.\nd. Назначать вице-президентов по делам администрации президента и делам дисциплинарной комиссии Queen Creek.\nf. Назначать судей Республики.\ng. Назначать и отстранять от должности следующие должности: мэры городов, советники Президента, главу службы безопасности президента и иных лиц, предусмотренных законодательством Республики.\nh. Осуществлять, посредством помилования частичное или полное освобождение от уголовной и административной ответственности, по всем видам дел, за исключением дел, которые законом отнесены к делам, по которым осуществление помилования не возможно.\ni. Награждать государственными наградами.\nj. Присваивать очередные и внеочередные звания военнослужащим.\nk. Даровать гражданство Queen Creek.\nl. Иные полномочия, установленные законом.\nm. вводить военное и чрезвычайное положение.\nn. Применять вооруженные силы Queen Creek, на территории и вне территории Queen Creek."},
-        {"Раздел 4.", "Президент Queen Creek может быть отстранены от должности по импичменту за государственную измену, взяточничество либо за другие серьезные преступления и правонарушения. Процедура импичмента может быть инициирована любым объединением 3-х руководителей государственных органов или 3-х членов кабинета Президента и рассматривается пленумом руководителей государственных органов. Если за импичмент проголосовало 3/4 действующих руководителей государственных органов, то президент считается отрешенным от должности. Президент обладает пожизненной неприкосновенностью. Временно снять неприкосновенность, в случае совершенного преступления президентом может Директор ФБР."},
-        {"Раздел 5.", "На территории Республики действуют 5 постоянных департаментов.\n\nПостоянными департаментами являются:\n\nДепартамент внутренней политики - департамент состоящее из Государственного центра лицензирования и Средств Массовой информации.\nНадзор за деятельностью министерства внутренней политики осуществлет советник Президента в социальной сфере\n\nДепартамент юстиции – департамент, состоящее из Федерального бюро расследований и Полицейского Департамента Куин Крика. \nНадзор за деятельностью министерства юстиции осуществляют советники по делам Юстиции и по делам Национальной безопасности в соответствии с постановлениями Верховного совета.\n\nДепартамент здравоохранения - департамент, осуществляющее выработку политики в области здравоохранения. \nНадзор за деятельностью Министрества здравоохранения осуществляет советник Президента в социальной сфере.\n\nДепартамент обороны – департамент, обеспечивающее безопасность государства, контроль вооруженных сил. \nНадзор за деятельностью министерства обороны осуществляют советники по делам Юстиции и по делам Национальной безопасности, в соответствии с постановлениями Верхвовного совета."},
-        {"Раздел 6.", "Все департаменты не зависимы между собой. Ни один департамент не может вмешиваться во внутренние дела другого министерства. Под внутренними делами департамента предполагается внутренние нормативно-правовые акты, дисциплинарные наказания сотрудников. Исключительным правом привлекать к дисциплинарной ответственности сотрудников 1-4 порядковой должности без участия третьих органов обладает ФБР и 5-10 должности с рассмотрением дела дисциплинарной комиссией."},
-        {"Раздел 7.", "Правительство в плане своей деятельности отвечает за благосостояние народа. Вправе распоряжаться государственной собственностью и иные полномочия в соответствии с законами Республики."},
-        {"Раздел 9.", "Кабинет Президента имеет право издавать акты в пределах следующей компетенции: \nа. Общие требования по поведению в государственных структурах\nб. Взаимоотношения и правила применения отдельных положений законов, регулирующих правоотношения государственных органов\nв. Распределять денежные средства из резервного фонда бюджета.\nг. Акты от имени кабинета президента входящие в компетенцию одного отдельного департамента."}
-    },
-    ["Статья 3"] = {
-        {"Раздел 1.", "Судебная власть Queen Creek предоставляется судебному аппарату из 5-ти судей. Суд Республики Квин-Крик имеет право в лице судьи суда Республики при рассмотрении уголовного дела назначить лицу, совершившему уголовное правонарушение или преступление низкой тяжести впервые, предупреждение, вопреки мерам наказания предусмотренным уголовным законом Республики. В случае, если такое лицо привлекается к уголовной ответственности в течение десяти дней с момента вступления в законную силу приговора суда по уголовному делу, то такое предупреждение недопустимо, равно как и не допустимо вынесение предупреждения, если повторное привлечение к уголовной ответственности лица было произведено до вынесения приговора. Судья занимает свои должности, пока поведение их безупречно, и в установленное время получают за свою службу вознаграждение, которое не может быть уменьшено во время нахождения их в должности. Пленум судебного аппарата - единовременное заседание всех действующих судей Республики. Решение Пленума принимается голосом большенства."},
-        {"Раздел 2.", "В компетенцию Суда входит следующие:\n\na. Толкования конституции, законов Республики Queen Creek и иных нижестоящих нормативно-правовых актов по запросу Президента Республики. Толкование постоянно и не подлежит обжалованию, оно может быть дано только пленумом судебного аппарата.\n\nb. Проверка на соответствие Конституции законов и иных Нормативно правовых актов Республики Queen Creek. Суд вправе отменить закон или иной нормативный правовой акт органов государственной власти Республики Queen Creek, в случае признания его неконституционным или противоречащим акту, имеющим высшую юридическую силу, или же вступившим в силу раньше, или же по причине создания коллизионных ситуаций. Иные полномочия суда в сфере конституционного контроля устанавливаются законом. Рассмотрения дел Конституционного контроля происходит Пленумом судебного аппарата.\n\nd. Решением спорных вопросов между государственных органов Queen Creek.\n\ne. Иные полномочия, установленные законом.\n\nf. Выдавать ордера на обыск, задержания, арест, отстранения, прослушивание.\n\ni. Создаёт и обобщает судебную практику Республики посредством Пленума судебного аппарата.\n\nj. В случае если какое то общественно опасное деяние не имеет меры наказания, пленум судебного аппарата вправе определить меру наказания самостоятельно.\n\nk. Создает судебные прецеденты по конкретным юридическим делам, которые применяются в рамках рассмотрения аналогичных юридических дел судами Республики Queen Creek. Исполнение судебных прецедентов является обязательным для исполнения на всей территории Республики Queen Creek. Судебный прецедент является источником права."},
-        {"Раздел 3.", "Государственной изменой Республики Queen Creek считается только ведение войны против него или присоединение к их врагам и оказание им помощи и содействия. Ни одно лицо не может быть осуждено за государственную измену иначе как на основании показаний двух свидетелей об одном и том же очевидном деянии либо собственного признания на открытом заседании суда, либо наличие фото/видео материалов, которые могут доказать вину. Генеральная Ассамблея имеет право устанавливать наказание за государственную измену, но признание виновным в измене не влечет лишения всех прав и состояния либо конфискации имущества иначе как при жизни виновного лица."},
-        {"Раздел 7.", "Судебный аппарат выступает судом первой инстанции по любым делам, пересмотр решений суда происходит в Верховном совете Республики."},
-        {"Раздел 8.", "Государственное обвинение по уголовным делам может выдвигать директор фбр и его заместители, советник юстиции, советник национальной безопасности, члены дисциплинарной комиссии."}
-    },
-    ["Статья 4"] = {
-        {"Раздел 1.", "Граждане Республики имеют следующие права:\na. Право на жизнь\nb. Право на своевременное получение медицинской помощи\nc. Право на неприкосновенность частной и личной жизни. Гражданинне может быть обыскан, досмотрен, без решения суда или иного способа,предусмотренным законом.\nd. Право на личную неприкосновенность. Гражданин не может быть задержан,арестован без решения суда. Гражданин, может быть, задержан правоохранительнымиорганами на срок 24 часа при подозрении на преступление. При задержание человекудолжны быть разъяснены его следующие права: на 1 телефонный звонок, на адвоката, хранить молчание. Государственные слушающие, работающие в ФБР, полиции, администрации президента, включая руководителей этих структур, трудоустраиваясь добровольно отказываются от права хранить молчания. В случае, если граждане будут желать хранить молчание, они автоматически соглашаются на увольнение с места работы, без право на восстановления в должности.\ne. Право на жилье. У гражданина не может быть изъято жилье, если оно у него является единственным.\nf. Право на свободу слова.\ng. Право на свободное получение и распространение информации.\nh. Право на защиту в суде.\ni. Право на государственного правозащитника при задержание.\nj. Право на свободное передвижение по территории государства.\nk. Право на свободные трудовые отношения.\nl. Право на Избирать и быть избранным.\nm. Право на пенсию, которая регулируется законом.\nn. Право на владение и ношения оружия, которое регулируется законом.\no. Иные права, предусмотренные, законами Республики, международными конвенциями, международными договорами."}
-    },
-}
+function imgui.VerticalSeparator()
+    local draw_list = imgui.GetWindowDrawList()
+    local pos = imgui.GetCursorScreenPos()
+    local window_height = imgui.GetWindowHeight()
+    local separator_x = pos.x
+    local separator_color = imgui.GetColorU32(imgui.Col.Border)
+   
+    draw_list:AddLine(
+        {separator_x, pos.y},
+        {separator_x, pos.y + window_height},
+        separator_color,
+        1.0
+    )
+    imgui.Dummy({0, window_height})
+end
+function imgui.CText(text)
+    local calc = imgui.CalcTextSize(text)
+    imgui.SetCursorPosX((imgui.GetWindowWidth() - calc.x) / 2)
+    imgui.Text(text)
+   end
+
+--local konstitution = {
+  --  ["1"] = {
+    --    {"1.", "2"},
+  --  },
+--}
 
 
-local lawsData = {
-    ["Статья 1. Преступления против жизни и здоровья"] = {
-        {"3.1.1 КК", "Убийство человека", 5},
-        {"3.1.2 КК", "Причинение легкого вреда здоровью", 2},
-        {"3.1.3 КК", "Причинение тяжкого вреда здоровью", 3},
-        {"3.1.4 КК", "Угроза убийством", 2},
-        {"3.1.5 КК", "Воспрепятствование медработникам", 3},
-    },
-    ["Статья 2. Преступления против свободы, чести и достоинства личности"] = {
-        {"3.2.1 КК", "Похищение", 4},
-        {"3.2.2 КК", "Похищение группой лиц", 6},
-        {"3.2.3 КК", "Клевета", 1},
-        {"3.2.4 КК", "Клевета сотруднику полиции", 3},
-        {"3.2.5 КК", "Причинение страданий", 4},
-        {"3.2.6 КК", "Побои", 2},
-    },
-    ["Статья 3. Преступление против собственности"] = {
-        {"3.3.1 КК", "Кража", 2},
-        {"3.3.2 КК", "Грабеж", 3},
-        {"3.3.3 КК", "Вымогательство", 3},
-        {"3.3.4 КК", "Угон автомобиля", 3},
-        {"3.3.5 КК", "Угон воздушного транспорта", 4},
-        {"3.3.6 КК", "Порча частного имущества", 1},
-    },
-    ["Статья 4. Преступления против общества"] = {
-        {"3.4.1 КК", "Теракт", 6},
-        {"3.4.2 КК", "Склонение к теракту", 3},
-        {"3.4.3 КК", "Пособничество террористам", 3},
-        {"3.4.4 КК", "Публичный призыв к теракту", 2},
-        {"3.4.5 КК", "Захват заложников", 6},
-        {"3.4.6 КК", "Незаконное приобретение, хранение оружия", 2},
-        {"3.4.7 КК", "Незаконная продажа или попытка продажи оружия", 4},
-        {"3.4.8 КК", "Ношение оружия в открытом виде", 1},
-        {"3.4.9 КК", "Изготовление взрывчатки", 4},
-        {"3.4.10 КК", "Пиратство", 3},
-        {"3.4.11 КК", "Создание, сбыт, дубликатов ключей от ТСР или ТС", 2},
-        {"3.4.12 КК", "Хранение наркотиков, более 20 грамм", 2},
-        {"3.4.13 КК", "Создание, сбыт наркотиков", 4},
-        {"3.4.14 КК", "Дискриминация", 2},
-        {"3.4.15 КК", "Распространение заведомо ложных сведений", 2},
-        {"3.4.16 КК", "Призывы к войне", 2},
-        {"3.4.17 КК", "Заведомо ложный донос", 1},
-        {"3.4.18 КК", "Принуждения лица к даче показаний", 3},
-    },
-    ["Статья 5. Должностные преступления"] = {
-        {"3.5.1 КК", "Злоупотребление полномочиями", 3},
-        {"3.5.2 КК", "Превышение полномочий", 4},
-        {"3.5.3 КК", "Получение взятки", 6},
-        {"3.5.4 КК", "Служебный подлог", 3},
-        {"3.5.5 КК", "Халатность", 2},
-    },
-    ["Статья 6. Преступление против государственной власти"] = {
-        {"3.6.1 КК", "Вооруженный мятеж", 6},
-        {"3.6.2 КК", "Неподчинение", 2},
-        {"3.6.3 КК", "Неисполнения решения прокуратуры", 1},
-        {"3.6.4 КК", "Дача взятки", 2},
-        {"3.6.5 КК", "Покушение на жизнь судьи, сотрудника полиции, правительства", 6},
-        {"3.6.6 КК", "Угроза жизни судьи, сотрудника полиции, правительства", 3},
-        {"3.6.7 КК", "Убийство судьи, сотрудника полиции, правительства", 6},
-        {"3.6.8 КК", "Побег из тюрьмы", 6},
-        {"3.6.9 КК", "Помощь в побеге из тюрьмы", 3},
-        {"3.6.10 КК", "Дача ложных показаний", 2},
-        {"3.6.11 КК", "Неисполнение приговора суда", 2},
-        {"3.6.12 КК", "Отказ от уплаты штрафа", 2},
-        {"3.6.13 КК", "Помеха сотрудникам полиции", 1},
-        {"3.6.14 КК", "Неподчинение прокуратуре", 1},
-        {"3.6.15 КК", "Уклонение от службы", 3},
-        {"3.6.16 КК", "Самоуправство", 1},
-        {"3.6.17 КК", "Неоднократное оскорбление сотрудника полиции", 2},
-        {"3.6.18 КК", "Незаконное использование рации департамента", 1},
-        {"3.6.19 КК", "Порча государственного имущества", 1},
-        {"3.6.20 КК", "Препятствие правосудию", 1},
-        {"3.6.21 КК", "Подделка документов", 2},
-        {"3.6.22 КК", "Проникновение на режимный объект", 2},
-        {"3.6.23 КК", "Нарушение правил РО", 1},
-        {"3.6.24 КК", "Раскрытие государственной тайны", 5},
-        {"3.6.25 КК", "Организация незаконного митинга", 3},
-        {"3.6.26 КК", "Неоднократный ложный вызов", 1},
-        {"3.6.28 КК", "Дезертирство", 3},
-        {"3.6.29 КК", "Надругательство над гербом или флагом республики", 1},
-    },
-    ["Статья 7. Экономические преступления"] = {
-        {"3.7.1 КК", "Ограничение торговли", 6},
-        {"3.7.2 КК", "Создание монополии", 6},
-        {"3.7.3 КК", "Кража государственных средств на нецелевые расходы", 6},
-    }
-}
-
-local pddData = {
-    ["Статья 2.1. Скоростной режим"] = {
-        {"2.1.2 ДК", "Нарушение скоростного режима установленного Дорожным Кодексом", 320000},
-    },
-    ["Статья 2.2. Езда в нетрезвом виде"] = {
-        {"2.2.1 ДК", "Управление наземным или водным транспортным средством в нетрезвом виде с показателем 0.5‰ промилле и выше.", 350000},
-        {"2.2.2 ДК", "Управление воздушным транспортным средством в нетрезвом виде с показателем 0.3‰ промилле и выше", 300000},
-    },
-    ["Статья 2.3. Парковка в неположенном месте"] = {
-        {"2.3.1 ДК", "Парковка транспортного средства по левой стороне дороги, на автомагистралях и железнодорожных путях", 120000},
-        {"2.3.2 ДК", "Парковка транспортного средства в местах проведения специальных операций или ближе чем на 15 метров от ограждений, которые установлены сотрудниками полицейских департаментов, ФБР, а также спец. подразделением OSO", 175000},
-        {"2.3.4 ДК", "Парковка воздушного транспортного средства на дорогах или парковках для наземных транспортных средств", 150000},
-    },
-    ["Статья 2.4. Езда по встречной полосе или в неположенном месте"] = {
-        {"2.4.1 ДК", "Езда по встречной полосе на транспортном средстве", 23000},
-        {"2.4.2 ДК", "Езда по тротуарам, обочинам, газонам, железнодорожным путям", 40000},
-    },
-    ["Статья 2.5. Дорожно-транспортное происшествие"] = {
-        {"2.5.2 ДК", "Дорожно-транспортное происшествие, повлекшее за собой смерть пешехода или другого водителя", 300000},
-        {"2.5.3 ДК", "Дорожно-транспортное происшествие, совершенное в нетрезвом состоянии и повлекшее за собой смерть пешехода или другого водителя", 300000},
-        {"2.5.4 ДК", "Дорожно-транспортное происшествие, повлекшее за собой вред здоровью перехода или другого водителя", 250000},
-        {"2.5.5 ДК", "Дорожно-транспортное происшествие, совершенное в нетрезвом состоянии и повлекшее за собой вред здоровью пешехода или другого водителя", 225000},
-    },
-    ["Статья 2.6. Уход водителей-участников ДТП с места его происшествия"] = {
-        {"2.6.1 ДК", "Уход водителей-участников ДТП с места его происшествия", 200000},
-    },
-    ["Статья 2.7. Игнорирования спец. сигналов"] = {
-        {"2.7.2 ДК", "Игнорирование водителем специальных сигналов, которые установлены на транспортных средствах", 150000},
-    },
-    ["Статья 2.8. Повторные нарушения правил дорожного движения"] = {
-        {"2.8.2 ДК", "Нарушение более трёх правил дорожного движения за день", 250000},
-        {"2.8.3 ДК", "Намеренное повторное нарушение правил дорожного движения", 500000},
-    }
-}
 -- main()
 function main()
     if not isSampfuncsLoaded() or not isSampLoaded() then return end
@@ -487,12 +288,6 @@ function main()
 	end
 end
 
-function imgui.CText(text)
-    local calc = imgui.CalcTextSize(text)
-    imgui.SetCursorPosX((imgui.GetWindowWidth() - calc.x) / 2)
-    imgui.Text(text)
-   end
-
 -- окно информации
 imgui.OnFrame(function() return window_two[0] end, function(player)
     if bit.band(flags, imgui.WindowFlags.NoMove) == 0 then
@@ -504,8 +299,8 @@ imgui.OnFrame(function() return window_two[0] end, function(player)
         end
     end
     imgui.SetNextWindowBgAlpha(0.3)
-    imgui.SetNextWindowSize(imgui.ImVec2(230,126), imgui.Cond.Always)
-    imgui.Begin("##yourinfo", window_two, flags + imgui.WindowFlags.NoScrollbar)
+
+    imgui.Begin("##yourinfo", window_two, flags + imgui.WindowFlags.NoScrollbar + imgui.WindowFlags.AlwaysAutoResize)
     local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED)
     local nickname = sampGetPlayerNickname(id)
     local fps = math.floor(memory.getfloat(12045136, true))
@@ -530,28 +325,28 @@ imgui.OnFrame(function() return ssu[0] end, function(player)
     imgui.SameLine()
     if imgui.Checkbox(u8'Запрос', zap) then
         if zap[0] == true then
-            ini.mainIni.zap = true
-            inicfg.save(ini, 'FTools/lawini.ini')
+            ini.SmartSu.zap = true
+            inicfg.save(ini, 'FTools/Fox.ini')
         elseif zap[0] == false then
-            ini.mainIni.zap = false
-            inicfg.save(ini, 'FTools/lawini.ini')
+            ini.SmartSu.zap = false
+            inicfg.save(ini, 'FTools/Fox.ini')
         end
     end
     imgui.SameLine()
     if imgui.Checkbox(u8'Запрос /d', zapd) then
         if zapd[0] == true then
-            ini.mainIni.zapd = true
-            inicfg.save(ini, 'FTools/lawini.ini')
+            ini.SmartSu.zapd = true
+            inicfg.save(ini, 'FTools/Fox.ini')
         elseif zapd[0] == false then
-            ini.mainIni.zapd = false
-            inicfg.save(ini, 'FTools/lawini.ini')
+            ini.SmartSu.zapd = false
+            inicfg.save(ini, 'FTools/Fox.ini')
         end
     end
 
     local filteredData = {}
 
     -- Перебираем данные для поиска
-    for article, offenses in pairs(lawsData) do
+    for article, offenses in apairs(lawsData) do
         if string.find(article:lower(), u8:decode(ffi.string(searchQuery)):lower()) or u8:decode(ffi.string(searchQuery)) == "" then
             filteredData[article] = offenses
         else
@@ -612,8 +407,6 @@ imgui.OnFrame(function() return ssu[0] end, function(player)
     end
     imgui.End()
 end)
-
-local searchQuery_1 = new.char[256]()
 
 imgui.OnFrame(function() return stik[0] end, function(player)
     imgui.SetNextWindowPos(imgui.ImVec2(500,500), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
@@ -687,7 +480,7 @@ end)
 -- сохранение темы
 function save_themes()
     ini.Themes.number = decorListNumber[0]
-    inicfg.save(ini, 'FTools/lawini.ini')
+    inicfg.save(ini, 'FTools/Fox.ini')
     imgui.SetNextWindowBgAlpha(alpha[0])
 end
 
@@ -700,7 +493,7 @@ function cmd_ssu(arg)
         ssu[0] = not ssu[0]
     end
     ini.mainIni.purID = arg
-    inicfg.save(ini, 'FTools/lawini.ini')
+    inicfg.save(ini, 'FTools/Fox.ini')
 end
 
 function cmd_stik(arg)
@@ -763,7 +556,7 @@ function save_command() -- очистка и перезаполнение таблицы
             end
         end
     elseif powerBool[0] == true then
-        sampAddChatMessage(tag .. ' Бинд выключен! Моежет включить его в меню.')
+        sampAddChatMessage(tag .. ' Бинд выключен! Можете включить его в меню.')
     end
 end
 
@@ -874,10 +667,10 @@ end)
 local about_us = new.bool(false)
 imgui.OnFrame(function() return about_us[0] end, function(player)
     imgui.SetNextWindowPos(imgui.ImVec2(600, 600), imgui.Cond.FirstUseEver)
-    imgui.SetNextWindowSize(imgui.ImVec2(180, 155), imgui.Cond.Always)
+    imgui.SetNextWindowSize(imgui.ImVec2(180, 160), imgui.Cond.Always)
     imgui.Begin(fa.CIRCLE_INFO .. u8" Информация", about_us, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoFocusOnAppearing)
     imgui.Text(u8'Имя скрипта: Foxi Tools')
-    imgui.Text(u8'Версия: v0.1.0 alpha')
+    imgui.Text(u8'Версия: v0.1.1 alpha')
     imgui.Text(u8'Автор: Choko Pay')
     if imgui.Button(u8'Закрыть', imgui.ImVec2(150, 30)) then
         about_us[0] = false
@@ -901,11 +694,10 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
         --imgui.Image(imhandle, imgui.ImVec2(100, 100)) 
         if imgui.Button(fa.GEAR .. u8' Основное', imgui.ImVec2(140, 40)) then tab = 1 end
         if imgui.Button(fa.GAVEL .. u8' Законодательство', imgui.ImVec2(140, 40)) then tab = 2 end
-        if imgui.Button(fa.NEWSPAPER .. u8' Уставы', imgui.ImVec2(140, 40)) then tab = 3 end
-        if imgui.Button(fa.KEYBOARD .. u8' Биндер', imgui.ImVec2(140, 40)) then tab = 4 end
-        if imgui.Button(fa.BOOK .. u8' Блокнот', imgui.ImVec2(140, 40)) then tab = 5 end
-        if imgui.Button(fa.CHART_PIE .. u8' Круговое меню', imgui.ImVec2(140, 40)) then tab = 6 end
-        if imgui.Button(fa.CLIPBOARD_QUESTION .. u8' Собеседование', imgui.ImVec2(140, 40)) then tab = 7 end
+        if imgui.Button(fa.SCALE_BALANCED .. u8' НП Акты', imgui.ImVec2(140, 40)) then tab = 3 end
+        if imgui.Button(fa.TABLE_LIST .. u8' Биндер', imgui.ImVec2(140, 40)) then tab = 4 end
+        if imgui.Button(fa.NOTE_STICKY .. u8' Заметки', imgui.ImVec2(140, 40)) then tab = 5 end
+        if imgui.Button(fa.MICROPHONE .. u8' Собеседование', imgui.ImVec2(140, 40)) then tab = 7 end
         imgui.SetCursorPos(imgui.ImVec2(14, 388))
         if imgui.Button(faicons.CIRCLE_INFO) then
             about_us[0] = not about_us[0]
@@ -967,12 +759,12 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
         imgui.SetCursorPos(imgui.ImVec2(190, 43))
         
         if imgui.BeginChild('Shpora', imgui.ImVec2(795, 470), true) then
-            imgui.Button(u8'Блокнот', imgui.ImVec2(765, 30))
+            imgui.Button(u8'Заметки', imgui.ImVec2(765, 30))
     
             -- Список блоков
             if imgui.BeginChild('Block List', imgui.ImVec2(150, 400), true) then
                 imgui.Columns(1)
-                imgui.CText(fa.SIGNATURE .. u8' Меню блокнотов')
+                imgui.CText(fa.SIGNATURE .. u8' Заметки')
                 imgui.Columns(1)
                 imgui.Separator()
                 imgui.Columns(1)
@@ -997,7 +789,7 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
     
             -- Редактор выбранного блока
             if imgui.BeginChild('Block Edit', imgui.ImVec2(607, 400), true) then
-                imgui.CText(fa.PEN .. u8' Редактор блокнота')
+                imgui.CText(fa.PEN .. u8' Изменить заметки')
                 imgui.Separator()
     
                 -- Поле для редактирования названия
@@ -1013,7 +805,7 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
                 end
                 if imgui.IsItemHovered() then
                     imgui.BeginTooltip()
-                    imgui.Text(u8'Новый блокнот')
+                    imgui.Text(u8'Новая заметка')
                     imgui.EndTooltip()
                 end
     
@@ -1032,7 +824,7 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
                 end
                 if imgui.IsItemHovered() then
                     imgui.BeginTooltip()
-                    imgui.Text(u8'ЭТА КНОПКА СОХРАНЯЕТ БЛОКНОТ, ЕСЛИ ЕЕ НЕ НАЖАТЬ НИЧЕГО НЕ СОХРАНИТСЯ')
+                    imgui.Text(u8'Сохранить заметку')
                     imgui.EndTooltip()
                 end
     
@@ -1047,7 +839,7 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
                 end
                 if imgui.IsItemHovered() then
                     imgui.BeginTooltip()
-                    imgui.Text(u8'Удалить блокнот')
+                    imgui.Text(u8'Удалить заметку')
                     imgui.EndTooltip()
                 end
                 
@@ -1068,73 +860,50 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
     if tab == 7 then
         imgui.SetCursorPos(imgui.ImVec2(190, 43))
         if imgui.BeginChild('Sobes', imgui.ImVec2(795, 470), true) then
-            imgui.Text('Coming soon, Sobes')
+            imgui.Button(u8'Собеседование', imgui.ImVec2(765, 30))
+            if imgui.BeginChild('Sobes List', imgui.ImVec2(765, 400), true) then
+            end
         end
     end
 
     if tab == 2 then
         imgui.SetCursorPos(imgui.ImVec2(190, 43))
         if imgui.BeginChild('Law', imgui.ImVec2(795, 470), true) then
-            if imgui.CollapsingHeader(u8'Конституция') then
-                if imgui.BeginChild(u8'Конституция', imgui.ImVec2(765, 365), true) then
-                    local filteredData = {}
-                    if imgui.CollapsingHeader(u8'Главное') then
-                        -- Перебираем данные для поиска
-                        for article, offenses in pairs(konstitution) do
-                            if string.find(article:lower(), u8:decode(ffi.string(searchQuery_1)):lower()) or u8:decode(ffi.string(searchQuery_1)) == "" then
-                                filteredData[article] = offenses
-                            else
-                                for _, offense in ipairs(offenses) do
-                                    -- Проверяем, совпадает ли любой из элементов правонарушение с введенным запросом
-                                    local code, description = offense[1], offense[2]
-                                    if string.find(code:lower(), u8:decode(ffi.string(searchQuery_1)):lower()) or string.find(description:lower(), u8:decode(ffi.string(searchQuery_1)):lower()) then
-                                        if not filteredData[article] then
-                                            filteredData[article] = {}
-                                        end
-                                        table.insert(filteredData[article], offense)
-                                    end
-                                end
-                            end
-                        end
-                    
-                        local sortedKeys_2 = {
-                            "Статья 2",
-                            "Статья 3",
-                            "Статья 4"
-                        }
-                        
-                        for _, article in ipairs(sortedKeys_2) do
-                            local offenses = filteredData[article]
-                            if offenses then  -- Если есть совпадения
-                                if imgui.CollapsingHeader(u8(article)) then  -- Создаем коллапсируемый заголовок
-                                    for _, offense in ipairs(offenses) do
-                                        local code_1 = offense[1]
-                                        local description_2 = offense[2]
-                                        imgui.TextWrapped(u8(string.format("%s %s ", code_1, description_2)))  -- Форматируем текст
-                                        local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED)
-                                        local nickname = sampGetPlayerNickname(id)
-                                    end
-                                end
-                            end
-                        end
-                    end
-                    imgui.EndChild()
-                end
-                imgui.EndChild()
+            imgui.Button(u8'Законодательство', imgui.ImVec2(765, 30))
+            if imgui.BeginChild('Law List', imgui.ImVec2(150, 400), true) then
+                imgui.Columns(1)
+                imgui.CText(fa.GAVEL .. u8' Законы')
+                imgui.Columns(1)
+                imgui.Separator()
             end
+            imgui.EndChild()
+            imgui.SameLine()
+            if imgui.BeginChild('Block Edit', imgui.ImVec2(607, 400), true) then
+            end
+            imgui.EndChild()
         end
 
     elseif tab == 3 then
         imgui.SetCursorPos(imgui.ImVec2(190, 43))
         if imgui.BeginChild('Ustav', imgui.ImVec2(795, 470), true) then
-            imgui.Text(u8'Coming soon, charters')
+            imgui.Button(u8'Нормативно-правовые акты', imgui.ImVec2(765, 30))
+            if imgui.BeginChild('NPA List', imgui.ImVec2(150, 400), true) then
+                imgui.Columns(1)
+                imgui.CText(fa.GAVEL .. u8' НПА')
+                imgui.Columns(1)
+                imgui.Separator()
+            end
+            imgui.EndChild()
+            imgui.SameLine()
+            if imgui.BeginChild('NPA Edit', imgui.ImVec2(607, 400), true) then
+            end
             imgui.EndChild()
         end
     
     elseif tab == 4 then
         imgui.SetCursorPos(imgui.ImVec2(190, 43))
         if imgui.BeginChild('Binder', imgui.ImVec2(795, 470), true) then
-            imgui.Button(u8'Список биндов', imgui.ImVec2(765, 30))
+            imgui.Button(u8'Биндер', imgui.ImVec2(765, 30))
             if imgui.BeginChild('Binder List', imgui.ImVec2(765, 365), true) then
                 imgui.Columns(5)
                 imgui.Text(fa.LIST_OL) imgui.SetColumnWidth(-1, 35)
@@ -1293,88 +1062,65 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
     elseif tab == 1 then
         imgui.SetCursorPos(imgui.ImVec2(190, 43))
         if imgui.BeginChild('Settings', imgui.ImVec2(795, 470), true) then
-            imgui.Text(u8'Личные настройки:')
-            imgui.PushItemWidth(200)
-            imgui.InputTextWithHint(u8'Введите Никнейм', u8'Nick Name', name, 256)
-            imgui.PopItemWidth()
-            imgui.PushItemWidth(200)
-            imgui.InputTextWithHint(u8'Введите тег организации', u8'FBI, GOV и т.д.', org, 256)
-            imgui.PopItemWidth()
-            imgui.PushItemWidth(200)
-            imgui.InputTextWithHint(u8'Введите название должности', u8'Сержант, Ст. Агент и т.д.', rank, 256)
-            imgui.PopItemWidth()
-            imgui.SetCursorPos(imgui.ImVec2(450, 15))
-            imgui.Text(u8'Найстроки Хелпера:')
-            imgui.SetCursorPos(imgui.ImVec2(450, 37))
-            imgui.PushItemWidth(200)
-            if imgui.Combo(u8'Выберите тему', decorListNumber, decorListBuffer, #decorList) then
-                save_themes()
-                theme[decorListNumber[0]+1].change()
-            end
-            imgui.PopItemWidth()
-            imgui.SetCursorPos(imgui.ImVec2(450, 75))
-            if imgui.Checkbox(u8'Вывод информации', checkinfo) then
-                if checkinfo[0] == true then
-                    window_two[0] = true
-                    ini.mainIni.checkinfo = checkinfo[0]
-                    inicfg.save(ini, 'FTools/lawini.ini')
-                else
-                    window_two[0] = false
-                    ini.mainIni.checkinfo = checkinfo[0]
-                    inicfg.save(ini, 'FTools/lawini.ini')
+            imgui.Button(u8'Основное', imgui.ImVec2(765, 30))
+            if imgui.BeginChild('Main List', imgui.ImVec2(765, 130), true) then
+                imgui.PushItemWidth(200)
+                imgui.InputTextWithHint(u8'##name', u8'Никнейм', name, 256)
+                imgui.PopItemWidth()
+                imgui.PushItemWidth(200)
+                imgui.InputTextWithHint(u8'##teg', u8'Тег организации', org, 256)
+                imgui.PopItemWidth()
+                imgui.PushItemWidth(200)
+                imgui.InputTextWithHint(u8'##orga', u8'Должность', rank, 256)
+                imgui.PopItemWidth()
+                imgui.SetCursorPos(imgui.ImVec2(222, 15))
+                imgui.PushItemWidth(200)
+                if imgui.Combo(u8'##Выберите тему', decorListNumber, decorListBuffer, #decorList) then
+                    save_themes()
+                    theme[decorListNumber[0]+1].change()
                 end
-            end
-            imgui.SameLine()
-            imgui.SetCursorPos(imgui.ImVec2(620, 75))
-            if imgui.Button(fa.UP_DOWN_LEFT_RIGHT) then
-                flags = (bit.band(flags, imgui.WindowFlags.NoMove) == 1) and (flags - imgui.WindowFlags.NoMove) or (flags + imgui.WindowFlags.NoMove)
-            end
-            if imgui.IsItemHovered() then
-                imgui.BeginTooltip()
-                imgui.Text(u8'Переместить окно информации')
-                imgui.EndTooltip()
-            end
-            imgui.SetCursorPos(imgui.ImVec2(450, 115))
-            imgui.PushItemWidth(200)
-            if imgui.SliderFloat(u8'Прозрачность фона', alpha, 0, 1) then
-                ini.Themes.alpha = alpha[0]
-                inicfg.save(ini, 'FTools/lawini.ini')
-                theme[decorListNumber[0]+1].change()
-            end
-            imgui.PopItemWidth()
-            imgui.Separator()
-            if imgui.BeginChild('Commands', imgui.ImVec2(200, 90), true) then
-                imgui.Text(u8'Команды Foxi Tools:\n/fox - открыть главное меню\n/ssu - умный розыск\n/sticket - умный штраф')
+                if imgui.IsItemHovered() then
+                    imgui.BeginTooltip()
+                    imgui.Text(u8'Изменить тему')
+                    imgui.EndTooltip()
+                end
+                imgui.PopItemWidth()
+                imgui.SetCursorPos(imgui.ImVec2(222, 51))
+                imgui.PushItemWidth(200)
+                if imgui.SliderFloat(u8'##Прозрачность', alpha, 0, 1) then
+                    ini.Themes.alpha = alpha[0]
+                    inicfg.save(ini, 'FTools/Fox.ini')
+                    theme[decorListNumber[0]+1].change()
+                end
+                if imgui.IsItemHovered() then
+                    imgui.BeginTooltip()
+                    imgui.Text(u8'Прозрачность фона')
+                    imgui.EndTooltip()
+                end
+                imgui.PopItemWidth()
             end
             imgui.EndChild()
-            if imgui.BeginChild('Noup', imgui.ImVec2(200, 80), true) then
-                imgui.CText(u8'Разработчик')
-                imgui.CText(u8'Choko_Pay')
-            end
-            imgui.EndChild()
-            imgui.SameLine()
-            imgui.SetCursorPos(imgui.ImVec2(223, 160))
-            if imgui.BeginChild('mainmenu', imgui.ImVec2(350, 178), true) then
-                imgui.CText(u8'Foxi Helper')
-                imgui.Text(u8'Возможности хелпера:\n1. Удобные настройки\n2. Биндер без ограничения в кол-ве биндов\n3. Блокноты\n4. Радиальное (круговое) меню\n5. Законодательство и уставы 21-го сервера в хелпере\n6. Помощник собеседований\n7. Техническая поддержка\nИ многое многое другое')
-            end
-            imgui.EndChild()
-            imgui.SameLine()
-            if imgui.BeginChild('Commands2', imgui.ImVec2(200, 90), true) then
-                imgui.CText(u8'Информация')
-                imgui.CText(u8'Foxi Helper')
-                imgui.CText(u8'alpha v0.1.0')
-            end
-            imgui.EndChild()
-            imgui.SetCursorPos(imgui.ImVec2(581, 258))
-            if imgui.BeginChild('Noup2', imgui.ImVec2(200, 80), true) then
-                imgui.CText(u8'Последнее обновление')
-                imgui.CText("22/09/2024")
-            end
-            imgui.EndChild()
-            imgui.SetCursorPos(imgui.ImVec2(15, 345))
-            if imgui.BeginChild('Thanks', imgui.ImVec2(766, 110), true) then
-                imgui.Image(imhandle, imgui.ImVec2(735, 80))
+            if imgui.BeginChild('Main Box', imgui.ImVec2(765, 262), true) then
+                if imgui.Checkbox(u8'Блок информации', checkinfo) then
+                    if checkinfo[0] == true then
+                        window_two[0] = true
+                        ini.mainIni.checkinfo = checkinfo[0]
+                        inicfg.save(ini, 'FTools/Fox.ini')
+                    else
+                        window_two[0] = false
+                        ini.mainIni.checkinfo = checkinfo[0]
+                        inicfg.save(ini, 'FTools/Fox.ini')
+                    end
+                end
+                imgui.SameLine()
+                if imgui.Button(fa.UP_DOWN_LEFT_RIGHT) then
+                    flags = (bit.band(flags, imgui.WindowFlags.NoMove) == 1) and (flags - imgui.WindowFlags.NoMove) or (flags + imgui.WindowFlags.NoMove)
+                end
+                if imgui.IsItemHovered() then
+                    imgui.BeginTooltip()
+                    imgui.Text(u8'Переместить окно информации')
+                    imgui.EndTooltip()
+                end
             end
             imgui.EndChild()
         end
