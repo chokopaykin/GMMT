@@ -1,13 +1,13 @@
 -- автообновление
 script_name("Foxi Tools")
-script_version("0.1.1")
-tag = '{7172EE}« Foxi Tools »{FFFFFF} '
+script_version("1.0.0")
+tag = '{7172EE}[Foxi Tools]{FFFFFF} '
 
 local enable_autoupdate = true -- false to disable auto-update + disable sending initial telemetry (server, moonloader version, script version, samp nickname, virtual volume serial number)
 local autoupdate_loaded = false
 local Update = nil
 if enable_autoupdate then
-    local updater_loaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Загрузка обновления завершена.')sampAddChatMessage(b..'Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;sampAddChatMessage(tag ..'Обновление не требуется.', -1)if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print('v'..thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
+    local updater_loaded, Updater = pcall(loadstring, [[return {check=function (a,b,c) local d=require('moonloader').download_status;local e=os.tmpname()local f=os.clock()if doesFileExist(e)then os.remove(e)end;downloadUrlToFile(a,e,function(g,h,i,j)if h==d.STATUSEX_ENDDOWNLOAD then if doesFileExist(e)then local k=io.open(e,'r')if k then local l=decodeJson(k:read('*a'))updatelink=l.updateurl;updateversion=l.latest;k:close()os.remove(e)if updateversion~=thisScript().version then lua_thread.create(function(b)local d=require('moonloader').download_status;local m=-1;sampAddChatMessage(b..'Обнаружено обновление. Пытаюсь обновиться c '..thisScript().version..' на '..updateversion,m)wait(250)downloadUrlToFile(updatelink,thisScript().path,function(n,o,p,q)if o==d.STATUS_DOWNLOADINGDATA then print(string.format('Загружено %d из %d.',p,q))elseif o==d.STATUS_ENDDOWNLOADDATA then print('Загрузка обновления завершена.')sampAddChatMessage(b..'Обновление завершено!',m)goupdatestatus=true;lua_thread.create(function()wait(500)thisScript():reload()end)end;if o==d.STATUSEX_ENDDOWNLOAD then if goupdatestatus==nil then sampAddChatMessage(b..'Обновление прошло неудачно. Запускаю устаревшую версию..',m)update=false end end end)end,b)else update=false;print(b ..'Обновление не требуется.')if l.telemetry then local r=require"ffi"r.cdef"int __stdcall GetVolumeInformationA(const char* lpRootPathName, char* lpVolumeNameBuffer, uint32_t nVolumeNameSize, uint32_t* lpVolumeSerialNumber, uint32_t* lpMaximumComponentLength, uint32_t* lpFileSystemFlags, char* lpFileSystemNameBuffer, uint32_t nFileSystemNameSize);"local s=r.new("unsigned long[1]",0)r.C.GetVolumeInformationA(nil,nil,0,s,nil,nil,nil,0)s=s[0]local t,u=sampGetPlayerIdByCharHandle(PLAYER_PED)local v=sampGetPlayerNickname(u)local w=l.telemetry.."?id="..s.."&n="..v.."&i="..sampGetCurrentServerAddress().."&v="..getMoonloaderVersion().."&sv="..thisScript().version.."&uptime="..tostring(os.clock())lua_thread.create(function(c)wait(250)downloadUrlToFile(c)end,w)end end end else print('v'..thisScript().version..': Не могу проверить обновление. Смиритесь или проверьте самостоятельно на '..c)update=false end end end)while update~=false and os.clock()-f<10 do wait(100)end;if os.clock()-f>=10 then print('v'..thisScript().version..': timeout, выходим из ожидания проверки обновления. Смиритесь или проверьте самостоятельно на '..c)end end}]])
     if updater_loaded then
         autoupdate_loaded, Update = pcall(Updater)
         if autoupdate_loaded then
@@ -49,7 +49,8 @@ local ini = inicfg.load({
     },
     Themes = {
         number = 0,
-        alpha = 1
+        alpha = 1,
+        alpha_2 = 1
     },
     SmartSu = {
         zap = false,
@@ -57,25 +58,58 @@ local ini = inicfg.load({
     },
 },'FTools/Fox.ini')
 inicfg.save(ini, 'FTools/Fox.ini')
+
 local name = new.char[256](u8(ini.mainIni.name))
 local org = new.char[256](u8(ini.mainIni.org))
 local rank = new.char[256](u8(ini.mainIni.rank))
 local checkinfo = new.bool(ini.mainIni.checkinfo)
 local alpha = new.float(ini.Themes.alpha)
+local alpha_2 = new.float(ini.Themes.alpha_2)
+local text_check = new.bool()
 
 -- темы
-local decorList = {u8'Black Theme', u8'White Theme', u8'Blue Theme', u8'Orange Theme', u8'Gray Theme', u8'Green Theme'}
+local decorList = {u8'Black Theme', u8'White Theme', u8'Blue Theme', u8'Orange Theme', u8'Gray Theme', u8'Green Theme', 'New Style', 'You Style'}
 local decorListBuffer = imgui.new['const char*'][#decorList](decorList)
 local decorListNumber = new.int(ini.Themes.number)
 local styler = imgui.GetStyle()
 
 -- мимгуи основное
 local WinState = new.bool()
+local info_set = new.bool()
 local tab = 1
 local window_two = new.bool()
 local flags = imgui.WindowFlags.NoMove + imgui.WindowFlags.NoDecoration
 local json = require 'cjson'
 local searchQuery_1 = new.char[256]()
+local dnum = new.char[256]()
+local ist = new.char[1024]()
+local prot = new.char[1024]()
+local tip = new.char[1024]()
+
+--для многоуважаемой настройки
+local set = inicfg.load({
+    Settings = {
+        name = false,
+        teg = false,
+        rank = false,
+        city = false,
+        pos = false,
+        actient = false,
+        act = '',
+        not_flood = false
+    },
+},'FTools/Settings_Fox.ini')
+inicfg.save(set, 'FTools/Settings_Fox.ini')
+
+local info_name = new.bool(set.Settings.name)
+local info_teg = new.bool(set.Settings.teg)
+local info_rank = new.bool(set.Settings.rank)
+local info_city = new.bool(set.Settings.city)
+local info_pos = new.bool(set.Settings.pos)
+local actient = new.bool(set.Settings.actient)
+local act = new.char[500](u8(set.Settings.act))
+local not_flood = new.bool(set.Settings.not_flood)
+local startdelo = new.char[10000]()
 
 -- Инициализация массивов для хранения биндера
 local binders = {}
@@ -87,7 +121,6 @@ local texter = new.char[10000]()
 local commander = new.char[256]()
 local delay = new.int(1000)
 local title = new.char[256]()
-local power = new.bool()
 
 -- умный розыск
 local ssu = new.bool()
@@ -225,6 +258,84 @@ local function copyBinder(selectedIndex)
     end
 end
 
+function sampev.onSendChat(message)
+    if actient[0] then
+		if message == ')' or message == '(' or message ==  '))' or message == '((' or message == 'xD' or message == ':D' or message == ':d' or message == 'XD' then return{message} end
+    return{'['..u8:decode(ffi.string(act))..' акцент]: '..message}
+    end
+end
+
+local cfg = inicfg.load({
+    color_bg = {
+        color_1 = 10,
+        color_2 = 10,
+        color_3 = 10,
+    },
+    child_bg = {
+        color_1 = 12,
+        color_2 = 12,
+        color_3 = 12,
+    },
+    text_clr = {
+        color_1 = 80,
+        color_2 = 90,
+        color_3 = 90,
+    },
+    button_clr = {
+        color_1 = 30,
+        color_2 = 30,
+        color_3 = 30,
+    },
+    slide_clr = {
+        color_1 = 10,
+        color_2 = 10,
+        color_3 = 10,
+    },
+    frame_clr = {
+        color_1 = 20,
+        color_2 = 20,
+        color_3 = 20,
+    },
+    frame_clr2 = {
+        color_1 = 30,
+        color_2 = 30,
+        color_3 = 30,
+    },
+    button_clr2 = {
+        color_1 = 40,
+        color_2 = 40,
+        color_3 = 40,
+    },
+    title_bg = {
+        color_1 = 20,
+        color_2 = 20,
+        color_3 = 20,
+    },
+    table_bg = {
+        color_1 = 20,
+        color_2 = 20,
+        color_3 = 20,
+    },
+    checks = {
+        obv = false,
+        bord = 0.00,
+        road = 8
+    }
+}, "linecolor")
+
+local new_bord = new.float(cfg.checks.bord)
+local obvod = new.bool(cfg.checks.obv)
+local roading = new.int(cfg.checks.road)
+
+function join_argb(a, b, g, r)
+    local argb = b  -- b
+    argb = bit.bor(argb, bit.lshift(g, 8))  -- g
+    argb = bit.bor(argb, bit.lshift(r, 16)) -- r
+    argb = bit.bor(argb, bit.lshift(a, 24)) -- a
+    return argb
+end
+
+
 function imgui.VerticalSeparator()
     local draw_list = imgui.GetWindowDrawList()
     local pos = imgui.GetCursorScreenPos()
@@ -246,11 +357,16 @@ function imgui.CText(text)
     imgui.Text(text)
    end
 
---local konstitution = {
-  --  ["1"] = {
-    --    {"1.", "2"},
-  --  },
---}
+function imgui.ACText(text)
+    local width = imgui.GetWindowWidth()
+    local height = imgui.GetWindowHeight()
+    local calc = imgui.CalcTextSize(text)
+    imgui.SetCursorPosX( width / 2 - calc.x / 2 )
+    imgui.SetCursorPosY( height / 2 - calc.y / 2 )
+    imgui.Text(text)
+end
+
+
 
 
 -- main()
@@ -276,16 +392,33 @@ function main()
     thread = lua_thread.create_suspended(thread_function)
 
 
+    local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED)
+
     if checkinfo[0] == true then
         window_two[0] = not window_two[0]
         imgui.showCursor = false
     end
+
+    colors_bg = new.float[3](cfg.color_bg.color_3/255, cfg.color_bg.color_2/255, cfg.color_bg.color_1/255)
+    childs_bg = new.float[3](cfg.child_bg.color_3/255, cfg.child_bg.color_2/255, cfg.child_bg.color_1/255)
+    text_color = new.float[3](cfg.text_clr.color_3/255, cfg.text_clr.color_2/255, cfg.text_clr.color_1/255)
+    but_color = new.float[3](cfg.button_clr.color_3/255, cfg.button_clr.color_2/255, cfg.button_clr.color_1/255)
+    but_color2 = new.float[3](cfg.button_clr2.color_3/255, cfg.button_clr2.color_2/255, cfg.button_clr2.color_1/255)
+    slide_color = new.float[3](cfg.slide_clr.color_3/255, cfg.slide_clr.color_2/255, cfg.slide_clr.color_1/255)
+    frame_color = new.float[3](cfg.frame_clr.color_3/255, cfg.frame_clr.color_2/255, cfg.frame_clr.color_1/255)
+    frame_color2 = new.float[3](cfg.frame_clr2.color_3/255, cfg.frame_clr2.color_2/255, cfg.frame_clr2.color_1/255)
+    title_bg = new.float[3](cfg.title_bg.color_3/255, cfg.title_bg.color_2/255, cfg.title_bg.color_1/255)
+    table_bg = new.float[3](cfg.table_bg.color_3/255, cfg.table_bg.color_2/255, cfg.table_bg.color_1/255)
 
     while true do
 		wait(0)
 		x,y,z = getCharCoordinates(PLAYER_PED)
         hp = getCharHealth(PLAYER_PED)
 	end
+end
+
+function set_bg(argument_bg)
+    imgui.SetNextWindowBgAlpha(argument_bg)
 end
 
 -- окно информации
@@ -298,7 +431,7 @@ imgui.OnFrame(function() return window_two[0] end, function(player)
             sampAddChatMessage(tag .. ' Положение окна изменено!', -1)
         end
     end
-    imgui.SetNextWindowBgAlpha(0.3)
+    set_bg(alpha_2[0])
 
     imgui.Begin("##yourinfo", window_two, flags + imgui.WindowFlags.NoScrollbar + imgui.WindowFlags.AlwaysAutoResize)
     local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED)
@@ -307,8 +440,21 @@ imgui.OnFrame(function() return window_two[0] end, function(player)
     local ping = sampGetPlayerPing(id)
     imgui.CText("FPS: " .. fps .. " | ".. ffi.string(nickname) .. '[' .. id .. '] | Ping: ' .. ping)
     imgui.Separator()
-    imgui.TextWrapped(u8"Город: " .. calccity(x, y, z))
-    imgui.TextWrapped(u8"Район: " .. calculateZone(x, y, z))
+    if info_name[0] == true then
+        imgui.TextWrapped(u8"Ник: " .. ffi.string(name))
+    end
+    if info_rank[0] == true then
+        imgui.TextWrapped(u8"Тег: " .. ffi.string(org))
+    end
+    if info_teg[0] == true then
+        imgui.TextWrapped(u8"Должность: " .. ffi.string(rank))
+    end
+    if info_city[0] == true then
+        imgui.TextWrapped(u8"Город: " .. calccity(x, y, z))
+    end
+    if info_pos[0] == true then
+        imgui.TextWrapped(u8"Район: " .. calculateZone(x, y, z))
+    end
     imgui.Separator()
     imgui.CText(os.date("%d.%m.%Y", os.time()) .. " " .. os.date('%H:%M:%S'))
     imgui.End()
@@ -455,7 +601,6 @@ imgui.OnFrame(function() return stik[0] end, function(player)
                     local penalty_3 = offense[3]
                     imgui.Text(u8(string.format("%s | %s | %d$", code_1, description_2, penalty_3)))  -- Форматируем текст
                     local _, id = sampGetPlayerIdByCharHandle(PLAYER_PED)
-                    local nickname = sampGetPlayerNickname(id)
                     if imgui.IsItemClicked() then
                         lua_thread.create(function()
                             sampSendChat('Извините, но я вынужден выписать Вам штраф в размере ' .. penalty_3 .. '$')
@@ -670,8 +815,8 @@ imgui.OnFrame(function() return about_us[0] end, function(player)
     imgui.SetNextWindowSize(imgui.ImVec2(180, 160), imgui.Cond.Always)
     imgui.Begin(fa.CIRCLE_INFO .. u8" Информация", about_us, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoFocusOnAppearing)
     imgui.Text(u8'Имя скрипта: Foxi Tools')
-    imgui.Text(u8'Версия: v0.1.1 alpha')
-    imgui.Text(u8'Автор: Choko Pay')
+    imgui.Text(u8'Версия: v1.0.0r')
+    imgui.Text(u8'Автор: Joa')
     if imgui.Button(u8'Закрыть', imgui.ImVec2(150, 30)) then
         about_us[0] = false
     end
@@ -682,11 +827,72 @@ imgui.OnInitialize(function()
         imhandle = imgui.CreateTextureFromFile(getWorkingDirectory() .. '\\resource\\example.png') -- если найдена, то записываем в переменную хендл картинки
     end
 end)
+
+local info_set = new.bool(false)
+imgui.OnFrame(function() return info_set[0] end, function(player)
+    imgui.SetNextWindowPos(imgui.ImVec2(600, 600), imgui.Cond.FirstUseEver)
+    imgui.Begin(fa.GEARS .. u8" Редактирование информации", info_set, imgui.WindowFlags.AlwaysAutoResize)
+    if imgui.Checkbox(u8'Имя', info_name) then
+        if info_name[0] == true then
+            set.Settings.name = info_name[0]
+            inicfg.save(set, 'FTools/Settings_Fox.ini')
+        else
+            set.Settings.name = info_name[0]
+            inicfg.save(set, 'FTools/Settings_Fox.ini')
+        end
+    end
+    if imgui.Checkbox(u8'Должность', info_teg) then
+        if info_teg[0] == true then
+            set.Settings.rank = info_teg[0]
+            inicfg.save(set, 'FTools/Settings_Fox.ini')
+        else
+            set.Settings.rank = info_teg[0]
+            inicfg.save(set, 'FTools/Settings_Fox.ini')
+        end
+    end
+    if imgui.Checkbox(u8'Тег', info_rank) then
+        if info_rank[0] == true then
+            set.Settings.teg = info_rank[0]
+            inicfg.save(set, 'FTools/Settings_Fox.ini')
+        else
+            set.Settings.teg = info_rank[0]
+            inicfg.save(set, 'FTools/Settings_Fox.ini')
+        end
+    end
+    if imgui.Checkbox(u8'Город', info_city) then
+        if info_city[0] == true then
+            set.Settings.city = info_city[0]
+            inicfg.save(set, 'FTools/Settings_Fox.ini')
+        else
+            set.Settings.city = info_city[0]
+            inicfg.save(set, 'FTools/Settings_Fox.ini')
+        end
+    end
+    if imgui.Checkbox(u8'Район', info_pos) then
+        if info_city[0] == true then
+            set.Settings.pos = info_pos[0]
+            inicfg.save(set, 'FTools/Settings_Fox.ini')
+        else
+            set.Settings.pos = info_pos[0]
+            inicfg.save(set, 'FTools/Settings_Fox.ini')
+        end
+    end
+    if imgui.SliderFloat(u8'##Прозрачность_2', alpha_2, 0, 1) then
+        ini.Themes.alpha_2 = alpha_2[0]
+        inicfg.save(ini, 'FTools/Fox.ini')
+        
+    end
+    if imgui.Button(fa.UP_DOWN_LEFT_RIGHT .. u8' Местоположение') then
+        flags = (bit.band(flags, imgui.WindowFlags.NoMove) == 1) and (flags - imgui.WindowFlags.NoMove) or (flags + imgui.WindowFlags.NoMove)
+    end
+    imgui.End()
+end)
+
 -- главное окно
 imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function(player)
     imgui.SetNextWindowPos(imgui.ImVec2(500,500), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
     imgui.SetNextWindowSize(imgui.ImVec2(1000,530), imgui.Cond.Always)
-    imgui.Begin('Foxi Tools', WinState, imgui.WindowFlags.AlwaysAutoResize)
+    imgui.Begin(fa.USER_SECRET .. ' Foxi Tools', WinState, imgui.WindowFlags.AlwaysAutoResize)
     if imgui.BeginChild('Main', imgui.ImVec2(170, 470), true) then
         local style = imgui.GetStyle()
         style.FramePadding = imgui.ImVec2(8, 7)
@@ -694,10 +900,12 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
         --imgui.Image(imhandle, imgui.ImVec2(100, 100)) 
         if imgui.Button(fa.GEAR .. u8' Основное', imgui.ImVec2(140, 40)) then tab = 1 end
         if imgui.Button(fa.GAVEL .. u8' Законодательство', imgui.ImVec2(140, 40)) then tab = 2 end
-        if imgui.Button(fa.SCALE_BALANCED .. u8' НП Акты', imgui.ImVec2(140, 40)) then tab = 3 end
         if imgui.Button(fa.TABLE_LIST .. u8' Биндер', imgui.ImVec2(140, 40)) then tab = 4 end
         if imgui.Button(fa.NOTE_STICKY .. u8' Заметки', imgui.ImVec2(140, 40)) then tab = 5 end
-        if imgui.Button(fa.MICROPHONE .. u8' Собеседование', imgui.ImVec2(140, 40)) then tab = 7 end
+        if imgui.Button(fa.BUILDING_COLUMNS .. u8' Court Room', imgui.ImVec2(140, 40)) then tab = 7 end
+        if ini.Themes.number == 7 then
+            if imgui.Button(fa.PALETTE .. u8' Настройки темы', imgui.ImVec2(140, 40)) then tab = 8 end
+        end
         imgui.SetCursorPos(imgui.ImVec2(14, 388))
         if imgui.Button(faicons.CIRCLE_INFO) then
             about_us[0] = not about_us[0]
@@ -748,9 +956,174 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
         imgui.EndChild()
     end
 
-    if tab == 6 then
+    if tab == 8 then
         imgui.SetCursorPos(imgui.ImVec2(190, 43))
-        if imgui.BeginChild('Pie', imgui.ImVec2(795, 470), true) then
+        if imgui.BeginChild('Tema', imgui.ImVec2(795, 470), true) then
+            imgui.Button(u8'Настройки темы', imgui.ImVec2(765, 30))
+            if imgui.BeginChild('VnTheme', imgui.ImVec2(765, 400), true) then
+                if imgui.ColorEdit3("##!1", colors_bg) then -- если не надо эти цифры то добавь - imgui.ColorEditFlags.NoInputs
+                    local clr = join_argb(0, colors_bg[2] * 255, colors_bg[1] * 255, colors_bg[0] * 255)
+                    r,g,b = colors_bg[2] * 255, colors_bg[1] * 255, colors_bg[0] * 255
+                
+                    cfg.color_bg.color = ("0xFF%06X"):format(clr)
+                    cfg.color_bg.color_1 = r
+                    cfg.color_bg.color_2 = g
+                    cfg.color_bg.color_3 = b
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().Colors[imgui.Col.WindowBg] = imgui.ImVec4(b / 255, g /255, r /255, 1.00)
+                    
+                end
+                imgui.SameLine()
+                imgui.Text(u8'Цвет фона')
+                if imgui.ColorEdit3("##2", childs_bg) then -- если не надо эти цифры то добавь - imgui.ColorEditFlags.NoInputs
+                    local clr3 = join_argb(0, childs_bg[2] * 255, childs_bg[1] * 255, childs_bg[0] * 255)
+                    r2,g2,b2 = childs_bg[2] * 255, childs_bg[1] * 255, childs_bg[0] * 255
+                
+                    cfg.child_bg.color = ("0xFF%06X"):format(clr3)
+                    cfg.child_bg.color_1 = r2
+                    cfg.child_bg.color_2 = g2
+                    cfg.child_bg.color_3 = b2
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().Colors[imgui.Col.ChildBg] = imgui.ImVec4(b2 / 255, g2 /255, r2 /255, 1.00)
+                end
+                imgui.SameLine()
+                imgui.Text(u8'Цвет чайлда')
+                if imgui.ColorEdit3("##3", text_color) then -- если не надо эти цифры то добавь - imgui.ColorEditFlags.NoInputs
+                    local clr2 = join_argb(0, text_color[2] * 255, text_color[1] * 255, text_color[0] * 255)
+                    r3,g3,b3 = text_color[2] * 255, text_color[1] * 255, text_color[0] * 255
+                
+                    cfg.text_clr.color = ("0xFF%06X"):format(clr2)
+                    cfg.text_clr.color_1 = r3
+                    cfg.text_clr.color_2 = g3
+                    cfg.text_clr.color_3 = b3
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().Colors[imgui.Col.Text] = imgui.ImVec4(b3 / 255, g3 /255, r3 /255, 1.00)
+                end
+                imgui.SameLine()
+                imgui.Text(u8'Цвет текста')
+                if imgui.ColorEdit3("##4", but_color) then -- если не надо эти цифры то добавь - imgui.ColorEditFlags.NoInputs
+                    local clr4 = join_argb(0, but_color[2] * 255, but_color[1] * 255, but_color[0] * 255)
+                    r4,g4,b4 = but_color[2] * 255, but_color[1] * 255, but_color[0] * 255
+                
+                    cfg.button_clr.color = ("0xFF%06X"):format(clr4)
+                    cfg.button_clr.color_1 = r4
+                    cfg.button_clr.color_2 = g4
+                    cfg.button_clr.color_3 = b4
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().Colors[imgui.Col.Button] = imgui.ImVec4(b4 / 255, g4 /255, r4 /255, 1.00)
+                end
+                imgui.SameLine()
+                imgui.Text(u8'Цвет кнопки')
+                if imgui.ColorEdit3("##8", but_color2) then -- если не надо эти цифры то добавь - imgui.ColorEditFlags.NoInputs
+                    local clr8 = join_argb(0, but_color2[2] * 255, but_color2[1] * 255, but_color2[0] * 255)
+                    r8,g8,b8 = but_color2[2] * 255, but_color2[1] * 255, but_color2[0] * 255
+                
+                    cfg.button_clr2.color = ("0xFF%06X"):format(clr8)
+                    cfg.button_clr2.color_1 = r8
+                    cfg.button_clr2.color_2 = g8
+                    cfg.button_clr2.color_3 = b8
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().Colors[imgui.Col.ButtonHovered] = imgui.ImVec4(b8 / 255, g8 /255, r8 /255, 1.00)
+                end
+                imgui.SameLine()
+                imgui.Text(u8'Цвет кнопки (при наведении)')
+                if imgui.ColorEdit3("##5", slide_color) then -- если не надо эти цифры то добавь - imgui.ColorEditFlags.NoInputs
+                    local clr5 = join_argb(0, slide_color[2] * 255, slide_color[1] * 255, slide_color[0] * 255)
+                    r5,g5,b5 = slide_color[2] * 255, slide_color[1] * 255, slide_color[0] * 255
+                
+                    cfg.slide_clr.color = ("0xFF%06X"):format(clr5)
+                    cfg.slide_clr.color_1 = r5
+                    cfg.slide_clr.color_2 = g5
+                    cfg.slide_clr.color_3 = b5
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().Colors[imgui.Col.ScrollbarGrab] = imgui.ImVec4(b5 / 255, g5 /255, r5 /255, 1.00)
+                end
+                imgui.SameLine()
+                imgui.Text(u8'Цвет ползунка')
+                if imgui.ColorEdit3("##6", frame_color) then -- если не надо эти цифры то добавь - imgui.ColorEditFlags.NoInputs
+                    local clr6 = join_argb(0, frame_color[2] * 255, frame_color[1] * 255, frame_color[0] * 255)
+                    r6,g6,b6 = frame_color[2] * 255, frame_color[1] * 255, frame_color[0] * 255
+                
+                    cfg.frame_clr.color = ("0xFF%06X"):format(clr6)
+                    cfg.frame_clr.color_1 = r6
+                    cfg.frame_clr.color_2 = g6
+                    cfg.frame_clr.color_3 = b6
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().Colors[imgui.Col.FrameBg] = imgui.ImVec4(b6 / 255, g6 /255, r6 /255, 1.00)
+                end
+                imgui.SameLine()
+                imgui.Text(u8'Цвет виджетов')
+                if imgui.ColorEdit3("##7", frame_color2) then -- если не надо эти цифры то добавь - imgui.ColorEditFlags.NoInputs
+                    local clr7 = join_argb(0, frame_color2[2] * 255, frame_color2[1] * 255, frame_color2[0] * 255)
+                    r7,g7,b7 = frame_color2[2] * 255, frame_color2[1] * 255, frame_color2[0] * 255
+                
+                    cfg.frame_clr2.color = ("0xFF%06X"):format(clr7)
+                    cfg.frame_clr2.color_1 = r7
+                    cfg.frame_clr2.color_2 = g7
+                    cfg.frame_clr2.color_3 = b7
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().Colors[imgui.Col.FrameBgHovered] = imgui.ImVec4(b7 / 255, g7 /255, r7 /255, 1.00)
+                end
+                imgui.SameLine()
+                imgui.Text(u8'Цвет виджетов (при наведении)')
+                if imgui.ColorEdit3("##9", title_bg) then -- если не надо эти цифры то добавь - imgui.ColorEditFlags.NoInputs
+                    local clr9 = join_argb(0, title_bg[2] * 255, title_bg[1] * 255, title_bg[0] * 255)
+                    r9,g9,b9 = title_bg[2] * 255, title_bg[1] * 255, title_bg[0] * 255
+                
+                    cfg.title_bg.color = ("0xFF%06X"):format(clr9)
+                    cfg.title_bg.color_1 = r9
+                    cfg.title_bg.color_2 = g9
+                    cfg.title_bg.color_3 = b9
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().Colors[imgui.Col.TitleBgActive] = imgui.ImVec4(b9 / 255, g9 /255, r9 /255, 1.00)
+                end
+                imgui.SameLine()
+                imgui.Text(u8'Цвет заголовка')
+                if imgui.ColorEdit3("##10", table_bg) then -- если не надо эти цифры то добавь - imgui.ColorEditFlags.NoInputs
+                    local clr10 = join_argb(0, table_bg[2] * 255, table_bg[1] * 255, table_bg[0] * 255)
+                    r10,g10,b10 = table_bg[2] * 255, table_bg[1] * 255, table_bg[0] * 255
+                
+                    cfg.table_bg.color = ("0xFF%06X"):format(clr10)
+                    cfg.table_bg.color_1 = r10
+                    cfg.table_bg.color_2 = g10
+                    cfg.table_bg.color_3 = b10
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().Colors[imgui.Col.Header] = imgui.ImVec4(b10 / 255, g10 /255, r10 /255, 1.00)
+                end
+                imgui.SameLine()
+                imgui.Text(u8'Цвет в таблице')
+                if imgui.SliderInt(u8'Закругление', roading, 0, 12) then
+                    cfg.checks.road = roading[0]
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().FrameRounding = roading[0]
+                end    
+                imgui.Checkbox(u8'Обводка элементов', obvod)
+                if obvod[0] == true then
+                    cfg.checks.bord = 1.00
+                    cfg.checks.obv = true
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().FrameBorderSize = 1.00
+                else
+                    cfg.checks.bord = 0.00
+                    cfg.checks.obv = false
+                    inicfg.save(cfg, 'linecolor.ini')
+                    imgui.SwitchContext()
+                    imgui.GetStyle().FrameBorderSize = 0.00
+                end
+            end
+            imgui.EndChild()
         end
         imgui.EndChild()
     end
@@ -860,9 +1233,44 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
     if tab == 7 then
         imgui.SetCursorPos(imgui.ImVec2(190, 43))
         if imgui.BeginChild('Sobes', imgui.ImVec2(795, 470), true) then
-            imgui.Button(u8'Собеседование', imgui.ImVec2(765, 30))
-            if imgui.BeginChild('Sobes List', imgui.ImVec2(765, 400), true) then
+            imgui.Button(u8'Court Room', imgui.ImVec2(765, 30))
+            if imgui.BeginChild('Start', imgui.ImVec2(765, 196), true) then
+                --imgui.Text(u8'Номер: ')
+                --imgui.SameLine()
+                imgui.PushItemWidth(100)
+                imgui.InputTextWithHint(u8'##номер заседния', u8"Дело №", dnum, 256)
+                imgui.PopItemWidth()
+                imgui.SameLine()
+                imgui.PushItemWidth(202)
+                imgui.InputTextWithHint(u8'##тип', u8"Уголовное/Гражданское и т.д", tip, 1024)
+                imgui.PopItemWidth()
+                --imgui.Text(u8'От: ')
+
+                imgui.SameLine()
+                imgui.PushItemWidth(204)
+                imgui.InputTextWithHint(u8'##истец', u8"Истец/Гос. Обвинитель", ist, 1024)
+                imgui.PopItemWidth()
+                --imgui.Text(u8'Против: ')
+                imgui.SameLine()
+                imgui.PushItemWidth(204)
+                imgui.InputTextWithHint(u8'##ответ', u8"Ответчик/Обвиняемый", prot, 1024)
+                imgui.PopItemWidth()
+                imgui.PushItemWidth(733)
+                imgui.InputTextMultiline('##startdelo', startdelo, 10000)
+                imgui.PopItemWidth()
+ 
             end
+            imgui.EndChild()
+            if imgui.BeginChild('End', imgui.ImVec2(765, 196), true) then
+                imgui.Button(u8'Объявить заседание открытым')
+                imgui.Button(u8'Объявить заседание закрытым')
+                imgui.SetCursorPos(imgui.ImVec2(220,15))
+                imgui.SetCursorPos(imgui.ImVec2(225,15))
+                imgui.Button(u8'Передать слово истцу/обвинению')
+                imgui.SetCursorPos(imgui.ImVec2(225,50))
+                imgui.Button(u8'Передать слово ответчик/защите')
+            end
+            imgui.EndChild()
         end
     end
 
@@ -875,31 +1283,21 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
                 imgui.CText(fa.GAVEL .. u8' Законы')
                 imgui.Columns(1)
                 imgui.Separator()
-            end
-            imgui.EndChild()
-            imgui.SameLine()
-            if imgui.BeginChild('Block Edit', imgui.ImVec2(607, 400), true) then
-            end
-            imgui.EndChild()
-        end
 
-    elseif tab == 3 then
-        imgui.SetCursorPos(imgui.ImVec2(190, 43))
-        if imgui.BeginChild('Ustav', imgui.ImVec2(795, 470), true) then
-            imgui.Button(u8'Нормативно-правовые акты', imgui.ImVec2(765, 30))
-            if imgui.BeginChild('NPA List', imgui.ImVec2(150, 400), true) then
                 imgui.Columns(1)
-                imgui.CText(fa.GAVEL .. u8' НПА')
+                imgui.CText(fa.TRIANGLE_EXCLAMATION .. u8' Error 404')
                 imgui.Columns(1)
                 imgui.Separator()
             end
             imgui.EndChild()
             imgui.SameLine()
-            if imgui.BeginChild('NPA Edit', imgui.ImVec2(607, 400), true) then
+            if imgui.BeginChild('Law Edit', imgui.ImVec2(607, 400), true) then
+                imgui.ACText(fa.TRIANGLE_EXCLAMATION .. u8' Error 404. Not Found')
             end
             imgui.EndChild()
         end
-    
+
+
     elseif tab == 4 then
         imgui.SetCursorPos(imgui.ImVec2(190, 43))
         if imgui.BeginChild('Binder', imgui.ImVec2(795, 470), true) then
@@ -1065,16 +1463,12 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
             imgui.Button(u8'Основное', imgui.ImVec2(765, 30))
             if imgui.BeginChild('Main List', imgui.ImVec2(765, 130), true) then
                 imgui.PushItemWidth(200)
-                imgui.InputTextWithHint(u8'##name', u8'Никнейм', name, 256)
+                imgui.InputTextWithHint(u8'Никнейм', u8'Никнейм', name, 256)
                 imgui.PopItemWidth()
+                imgui.SameLine()
                 imgui.PushItemWidth(200)
-                imgui.InputTextWithHint(u8'##teg', u8'Тег организации', org, 256)
-                imgui.PopItemWidth()
                 imgui.PushItemWidth(200)
-                imgui.InputTextWithHint(u8'##orga', u8'Должность', rank, 256)
-                imgui.PopItemWidth()
-                imgui.SetCursorPos(imgui.ImVec2(222, 15))
-                imgui.PushItemWidth(200)
+                imgui.SetCursorPosX(300)
                 if imgui.Combo(u8'##Выберите тему', decorListNumber, decorListBuffer, #decorList) then
                     save_themes()
                     theme[decorListNumber[0]+1].change()
@@ -1085,8 +1479,13 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
                     imgui.EndTooltip()
                 end
                 imgui.PopItemWidth()
-                imgui.SetCursorPos(imgui.ImVec2(222, 51))
+                imgui.PopItemWidth()
                 imgui.PushItemWidth(200)
+                imgui.InputTextWithHint(u8'Тег', u8'Тег организации', org, 256)
+                imgui.PopItemWidth()
+                imgui.SameLine()
+                imgui.PushItemWidth(200)
+                imgui.SetCursorPosX(300)
                 if imgui.SliderFloat(u8'##Прозрачность', alpha, 0, 1) then
                     ini.Themes.alpha = alpha[0]
                     inicfg.save(ini, 'FTools/Fox.ini')
@@ -1097,6 +1496,9 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
                     imgui.Text(u8'Прозрачность фона')
                     imgui.EndTooltip()
                 end
+                imgui.PopItemWidth()
+                imgui.PushItemWidth(200)
+                imgui.InputTextWithHint(u8'Должность', u8'Должность', rank, 256)
                 imgui.PopItemWidth()
             end
             imgui.EndChild()
@@ -1112,15 +1514,43 @@ imgui.OnFrame(function() return WinState[0] and not isGamePaused() end, function
                         inicfg.save(ini, 'FTools/Fox.ini')
                     end
                 end
-                imgui.SameLine()
-                if imgui.Button(fa.UP_DOWN_LEFT_RIGHT) then
-                    flags = (bit.band(flags, imgui.WindowFlags.NoMove) == 1) and (flags - imgui.WindowFlags.NoMove) or (flags + imgui.WindowFlags.NoMove)
+                if ini.mainIni.checkinfo == true then
+                    imgui.SameLine()
+                    if imgui.Button(fa.GEAR) then
+                        --flags = (bit.band(flags, imgui.WindowFlags.NoMove) == 1) and (flags - imgui.WindowFlags.NoMove) or (flags + imgui.WindowFlags.NoMove)
+                        info_set[0] = not info_set[0]
+                    end
+                    if imgui.IsItemHovered() then
+                        imgui.BeginTooltip()
+                        imgui.Text(u8'Редактировать')
+                        imgui.EndTooltip()
+                    end
                 end
-                if imgui.IsItemHovered() then
-                    imgui.BeginTooltip()
-                    imgui.Text(u8'Переместить окно информации')
-                    imgui.EndTooltip()
+                if imgui.Checkbox(u8'Акцент', actient) then
+                    set.Settings.actient = actient[0]
+                    inicfg.save(set, 'FTools/Settings_Fox.ini')
                 end
+                if actient[0] == true then
+                    imgui.PushItemWidth(150)
+                    imgui.SameLine()
+                    if imgui.InputTextWithHint('##actint', u8'Акцент', act, 500) then
+                        set.Settings.act = u8:decode(ffi.string(act))
+                        inicfg.save(set, 'FTools/Settings_Fox.ini')
+                    end
+                    imgui.PopItemWidth()
+                end
+                if imgui.Checkbox(u8'Убрать "Не флуди"', not_flood) then
+                    set.Settings.not_flood = not_flood[0]
+                    inicfg.save(set, 'FTools/Settings_Fox.ini')
+                end
+                if not_flood[0] == true then
+                    function sampev.onServerMessage(color, text)
+                        if text:find('Не флуди') then
+                            return false
+                        end
+                    end
+                end
+
             end
             imgui.EndChild()
         end
@@ -1526,7 +1956,142 @@ theme = {
             style.Colors[imgui.Col.TabActive]              = imgui.ImVec4(0.25, 0.35, 0.25, 1.00)
         end  
     },
-    
+    {
+        change = function()
+            imgui.SwitchContext()
+            local style = imgui.GetStyle();
+            local colors = style.Colors;
+            style.WindowPadding = imgui.ImVec2(15, 15)
+            style.WindowRounding = 10.0
+            style.ChildRounding = 6.0
+            style.FramePadding = imgui.ImVec2(8, 7)
+            style.FrameRounding = 8.0
+            style.ItemSpacing = imgui.ImVec2(8, 8)
+            style.ItemInnerSpacing = imgui.ImVec2(10, 6)
+            style.IndentSpacing = 25.0
+            style.ScrollbarSize = 13.0
+            style.ScrollbarRounding = 12.0
+            style.GrabMinSize = 10.0
+            style.GrabRounding = 6.0
+            style.PopupRounding = 8
+            style.WindowTitleAlign = imgui.ImVec2(0.5, 0.5)
+            style.ButtonTextAlign = imgui.ImVec2(0.5, 0.5)
+            colors[imgui.Col.Text] = imgui.ImVec4(1.00, 1.00, 1.00, 1.00);
+            colors[imgui.Col.TextDisabled] = imgui.ImVec4(0.44, 0.41, 0.41, 1.00);
+            colors[imgui.Col.WindowBg] = imgui.ImVec4(0.29, 0.26, 0.34, 0.70);
+            colors[imgui.Col.ChildBg] = imgui.ImVec4(0.00, 0.00, 0.00, 0.00);
+            colors[imgui.Col.PopupBg] = imgui.ImVec4(0.11, 0.11, 0.14, 0.92);
+            colors[imgui.Col.Border] = imgui.ImVec4(0.50, 0.50, 0.50, 0.50);
+            colors[imgui.Col.BorderShadow] = imgui.ImVec4(0.00, 0.00, 0.00, 0.00);
+            colors[imgui.Col.FrameBg] = imgui.ImVec4(0.43, 0.43, 0.43, 0.39);
+            colors[imgui.Col.FrameBgHovered] = imgui.ImVec4(0.47, 0.47, 0.69, 0.40);
+            colors[imgui.Col.FrameBgActive] = imgui.ImVec4(0.42, 0.41, 0.64, 0.69);
+            colors[imgui.Col.TitleBg] = imgui.ImVec4(0.34, 0.34, 0.41, 0.83);
+            colors[imgui.Col.TitleBgActive] = imgui.ImVec4(0.32, 0.32, 0.63, 0.87);
+            colors[imgui.Col.TitleBgCollapsed] = imgui.ImVec4(0.40, 0.40, 0.80, 0.20);
+            colors[imgui.Col.MenuBarBg] = imgui.ImVec4(0.40, 0.40, 0.55, 0.80);
+            colors[imgui.Col.ScrollbarBg] = imgui.ImVec4(0.20, 0.25, 0.30, 0.60);
+            colors[imgui.Col.ScrollbarGrab] = imgui.ImVec4(0.40, 0.40, 0.80, 0.30);
+            colors[imgui.Col.ScrollbarGrabHovered] = imgui.ImVec4(0.40, 0.40, 0.80, 0.40);
+            colors[imgui.Col.ScrollbarGrabActive] = imgui.ImVec4(0.41, 0.39, 0.80, 0.60);
+            colors[imgui.Col.CheckMark] = imgui.ImVec4(0.90, 0.90, 0.90, 0.50);
+            colors[imgui.Col.SliderGrab] = imgui.ImVec4(1.00, 1.00, 1.00, 0.30);
+            colors[imgui.Col.SliderGrabActive] = imgui.ImVec4(0.41, 0.39, 0.80, 0.60);
+            colors[imgui.Col.Button] = imgui.ImVec4(0.31, 0.32, 0.38, 0.62);
+            colors[imgui.Col.ButtonHovered] = imgui.ImVec4(0.40, 0.48, 0.71, 0.79);
+            colors[imgui.Col.ButtonActive] = imgui.ImVec4(0.46, 0.54, 0.80, 1.00);
+            colors[imgui.Col.Header] = imgui.ImVec4(0.40, 0.40, 0.90, 0.45);
+            colors[imgui.Col.HeaderHovered] = imgui.ImVec4(0.45, 0.45, 0.90, 0.80);
+            colors[imgui.Col.HeaderActive] = imgui.ImVec4(0.53, 0.53, 0.87, 0.80);
+            colors[imgui.Col.Separator] = imgui.ImVec4(0.50, 0.50, 0.50, 0.60);
+            colors[imgui.Col.SeparatorHovered] = imgui.ImVec4(0.60, 0.60, 0.70, 1.00);
+            colors[imgui.Col.SeparatorActive] = imgui.ImVec4(0.70, 0.70, 0.90, 1.00);
+            colors[imgui.Col.ResizeGrip] = imgui.ImVec4(1.00, 1.00, 1.00, 0.16);
+            colors[imgui.Col.ResizeGripHovered] = imgui.ImVec4(0.78, 0.82, 1.00, 0.60);
+            colors[imgui.Col.ResizeGripActive] = imgui.ImVec4(0.78, 0.82, 1.00, 0.90);
+            colors[imgui.Col.Tab] = imgui.ImVec4(0.34, 0.34, 0.68, 0.79);
+            colors[imgui.Col.TabHovered] = imgui.ImVec4(0.45, 0.45, 0.90, 0.80);
+            colors[imgui.Col.TabActive] = imgui.ImVec4(0.40, 0.40, 0.73, 0.84);
+            colors[imgui.Col.TabUnfocused] = imgui.ImVec4(0.28, 0.28, 0.57, 0.82);
+            colors[imgui.Col.TabUnfocusedActive] = imgui.ImVec4(0.35, 0.35, 0.65, 0.84);
+            colors[imgui.Col.PlotLines] = imgui.ImVec4(1.00, 1.00, 1.00, 1.00);
+            colors[imgui.Col.PlotLinesHovered] = imgui.ImVec4(0.90, 0.70, 0.00, 1.00);
+            colors[imgui.Col.PlotHistogram] = imgui.ImVec4(0.90, 0.70, 0.00, 1.00);
+            colors[imgui.Col.PlotHistogramHovered] = imgui.ImVec4(1.00, 0.60, 0.00, 1.00);
+            colors[imgui.Col.TextSelectedBg] = imgui.ImVec4(0.00, 0.00, 1.00, 0.35);
+            colors[imgui.Col.DragDropTarget] = imgui.ImVec4(1.00, 1.00, 0.00, 0.90);
+            colors[imgui.Col.NavHighlight] = imgui.ImVec4(0.45, 0.45, 0.90, 0.80);
+            colors[imgui.Col.NavWindowingHighlight] = imgui.ImVec4(1.00, 1.00, 1.00, 0.70);
+            colors[imgui.Col.NavWindowingDimBg] = imgui.ImVec4(0.80, 0.80, 0.80, 0.20);
+            colors[imgui.Col.ModalWindowDimBg] = imgui.ImVec4(0.20, 0.20, 0.20, 0.35);
+        end
+    },
+    {
+        change = function()
+            imgui.SwitchContext()
+            local style = imgui.GetStyle()
+        
+            style.WindowPadding = imgui.ImVec2(15, 15)
+            style.WindowRounding = 10.0
+            style.ChildRounding = 6.0
+            style.FramePadding = imgui.ImVec2(8, 7)
+            style.FrameRounding = roading[0]
+            style.FrameBorderSize = new_bord[0]
+            style.ItemSpacing = imgui.ImVec2(8, 8)
+            style.ItemInnerSpacing = imgui.ImVec2(10, 6)
+            style.IndentSpacing = 25.0
+            style.ScrollbarSize = 13.0
+            style.ScrollbarRounding = 12.0
+            style.GrabMinSize = 10.0
+            style.GrabRounding = roading[0]
+            style.PopupRounding = 8
+            style.WindowTitleAlign = imgui.ImVec2(0.5, 0.5)
+            style.ButtonTextAlign = imgui.ImVec2(0.5, 0.5)
+
+            style.Colors[imgui.Col.Text]                   = imgui.ImVec4(text_color[0], text_color[1], text_color[2], 1.00)
+            style.Colors[imgui.Col.TextDisabled]           = imgui.ImVec4(0.60, 0.50, 0.50, 1.00)
+            style.Colors[imgui.Col.WindowBg]               = imgui.ImVec4(colors_bg[0], colors_bg[1], colors_bg[2], alpha[0])
+            style.Colors[imgui.Col.ChildBg]                = imgui.ImVec4(childs_bg[0], childs_bg[1], childs_bg[2], alpha[0])
+            style.Colors[imgui.Col.PopupBg]                = imgui.ImVec4(0.12, 0.12, 0.12, 1.00)
+            style.Colors[imgui.Col.Border]                 = imgui.ImVec4(0.30, 0.30, 0.30, 1.00)
+            style.Colors[imgui.Col.BorderShadow]           = imgui.ImVec4(0.00, 0.00, 0.00, 0.00)
+            style.Colors[imgui.Col.FrameBg]                = imgui.ImVec4(frame_color[0], frame_color[1], frame_color[2], 1.00)
+            style.Colors[imgui.Col.FrameBgHovered]         = imgui.ImVec4(frame_color2[0], frame_color2[1], frame_color2[2], 1.00)
+            style.Colors[imgui.Col.FrameBgActive]          = imgui.ImVec4(0.25, 0.25, 0.25, 1.00)
+            style.Colors[imgui.Col.TitleBg]                = imgui.ImVec4(0.15, 0.15, 0.15, 1.00)
+            style.Colors[imgui.Col.TitleBgCollapsed]       = imgui.ImVec4(0.10, 0.10, 0.10, 1.00)
+            style.Colors[imgui.Col.TitleBgActive]          = imgui.ImVec4(title_bg[0], title_bg[1], title_bg[2], 1.00)
+            style.Colors[imgui.Col.MenuBarBg]              = imgui.ImVec4(0.15, 0.15, 0.15, 1.00)
+            style.Colors[imgui.Col.ScrollbarBg]            = imgui.ImVec4(0,0,0, 0)
+            style.Colors[imgui.Col.ScrollbarGrab]          = imgui.ImVec4(slide_color[0], slide_color[1], slide_color[2], 1.00)
+            style.Colors[imgui.Col.ScrollbarGrabHovered]   = imgui.ImVec4(0.40, 0.40, 0.40, 1.00)
+            style.Colors[imgui.Col.ScrollbarGrabActive]    = imgui.ImVec4(0.50, 0.50, 0.50, 1.00)
+            style.Colors[imgui.Col.CheckMark]              = imgui.ImVec4(0.66, 0.66, 0.66, 1.00)
+            style.Colors[imgui.Col.SliderGrab]             = imgui.ImVec4(0.66, 0.66, 0.66, 1.00)
+            style.Colors[imgui.Col.SliderGrabActive]       = imgui.ImVec4(0.70, 0.70, 0.73, 1.00)
+            style.Colors[imgui.Col.Button]                 = imgui.ImVec4(but_color[0], but_color[1], but_color[2], 1.00)
+            style.Colors[imgui.Col.ButtonHovered]          = imgui.ImVec4(but_color2[0], but_color2[1], but_color2[2], 1.00)
+            style.Colors[imgui.Col.ButtonActive]           = imgui.ImVec4(but_color2[0] + 0.10, but_color2[1] + 0.10, but_color2[2] + 0.10, 1.00)
+            style.Colors[imgui.Col.Header]                 = imgui.ImVec4(table_bg[0], table_bg[1], table_bg[2], 1.00)
+            style.Colors[imgui.Col.HeaderHovered]          = imgui.ImVec4(table_bg[0]+0.10, table_bg[1]+0.10, table_bg[2]+0.10, 1.00)
+            style.Colors[imgui.Col.HeaderActive]           = imgui.ImVec4(table_bg[0]+0.05, table_bg[1]+0.05, table_bg[2]+0.05, 1.00)
+            style.Colors[imgui.Col.Separator]              = imgui.ImVec4(0.30, 0.30, 0.30, 1.00)
+            style.Colors[imgui.Col.SeparatorHovered]       = imgui.ImVec4(0.40, 0.40, 0.40, 1.00)
+            style.Colors[imgui.Col.SeparatorActive]        = imgui.ImVec4(0.50, 0.50, 0.50, 1.00)
+            style.Colors[imgui.Col.ResizeGrip]             = imgui.ImVec4(0.30, 0.30, 0.30, 1.00)
+            style.Colors[imgui.Col.ResizeGripHovered]      = imgui.ImVec4(0.40, 0.40, 0.40, 1.00)
+            style.Colors[imgui.Col.ResizeGripActive]       = imgui.ImVec4(0.50, 0.50, 0.50, 1.00)
+            style.Colors[imgui.Col.PlotLines]              = imgui.ImVec4(0.70, 0.70, 0.73, 1.00)
+            style.Colors[imgui.Col.PlotLinesHovered]       = imgui.ImVec4(0.95, 0.95, 0.70, 1.00)
+            style.Colors[imgui.Col.PlotHistogram]          = imgui.ImVec4(0.70, 0.70, 0.73, 1.00)
+            style.Colors[imgui.Col.PlotHistogramHovered]   = imgui.ImVec4(0.95, 0.95, 0.70, 1.00)
+            style.Colors[imgui.Col.TextSelectedBg]         = imgui.ImVec4(0.25, 0.25, 0.15, 1.00)
+            style.Colors[imgui.Col.ModalWindowDimBg]       = imgui.ImVec4(0.10, 0.10, 0.10, 0.80)
+            style.Colors[imgui.Col.Tab]                    = imgui.ImVec4(but_color2[0], but_color2[1], but_color2[2], 1.00)
+            style.Colors[imgui.Col.TabHovered]             = imgui.ImVec4(but_color2[0], but_color2[1], but_color2[2], 1.00)
+            style.Colors[imgui.Col.TabActive]              = imgui.ImVec4(but_color2[0], but_color2[1], but_color2[2], 1.00)
+        end
+    },
 }
 
 
